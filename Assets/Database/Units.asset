@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a773a02d2742ee449dbd9f6c5b790fd, type: 3}
+  m_Name: Units
+  m_EditorClassIdentifier: 
+  entries:
+  - ID: mage_class
+    IsClass: 1
+    ClassName: Mage
+    UnitPrefab: {fileID: 1903166875534393930, guid: 40c6f566a8119af4bbcac9d30062772d,
+      type: 3}
+    UnitFrame: {fileID: 4380105670026436816, guid: 29e09a350ec5d5140a08ef4abf630c28,
+      type: 3}
+  - ID: rogue_class
+    IsClass: 1
+    ClassName: Rogue
+    UnitPrefab: {fileID: 3420495580581689818, guid: c10fef62a7faccc44a6e8df079fbed28,
+      type: 3}
+    UnitFrame: {fileID: 4391385094260975556, guid: f05337a4223ea1041a4202868c905313,
+      type: 3}
+  - ID: warrior_class
+    IsClass: 1
+    ClassName: Warrior
+    UnitPrefab: {fileID: 6728622813667053915, guid: 4e4c7694b6b11454e8fd373a6beb5b4a,
+      type: 3}
+    UnitFrame: {fileID: 7664730028434396140, guid: 3e2f16646e9a75b4485ad01641d1d401,
+      type: 3}
+  - ID: dragon_knight_emperor
+    IsClass: 0
+    ClassName: DragonKnightEmperor
+    UnitPrefab: {fileID: 6881776111511243521, guid: 5bfc2da9cadb0734b8dc93bc0a88b4dc,
+      type: 3}
+    UnitFrame: {fileID: 3825098364569247845, guid: d3a256b3f83e9dd439dbdf6d10e708af,
+      type: 3}
+  - ID: dragon_lamprey
+    IsClass: 0
+    ClassName: DragonLamprey
+    UnitPrefab: {fileID: 967947951544569708, guid: 074e3217ed38d9448ab794f2935850d1,
+      type: 3}
+    UnitFrame: {fileID: 5411732891089956143, guid: 7876ea6494e61124db89310389730a38,
+      type: 3}
+  - ID: dragon_lord_class
+    IsClass: 1
+    ClassName: DragonLordClass
+    UnitPrefab: {fileID: 7013826564992204299, guid: 483b2394aab1fcb488913b69a482f894,
+      type: 3}
+    UnitFrame: {fileID: 4978057664753341564, guid: 4a79240dfa4e3ec4da30a902e846ecd8,
+      type: 3}
+  - ID: fallen_dragon_knight
+    IsClass: 0
+    ClassName: FallenDragonKnight
+    UnitPrefab: {fileID: 741672855044735896, guid: 87650b175350ed246a208557f19a5265,
+      type: 3}
+    UnitFrame: {fileID: 9016446074080058277, guid: 16f67e27278b75c4681749ce19bf30e1,
+      type: 3}
+  - ID: harmless_dragon_egg
+    IsClass: 0
+    ClassName: HarmlessDragonEgg
+    UnitPrefab: {fileID: 1003597040176613108, guid: 9ffd5218786f3424d91c6187e7c4a425,
+      type: 3}
+    UnitFrame: {fileID: 2929714480541974683, guid: b792d73f6a1b2dc4386bf09d5a7359fe,
+      type: 3}
+  - ID: imperial_dragon_sovereign
+    IsClass: 0
+    ClassName: ImperialDragonSovereign
+    UnitPrefab: {fileID: 6163945240663972402, guid: 97af7f46b117bbc4e83a4aa48ecc4df5,
+      type: 3}
+    UnitFrame: {fileID: 8043734198472907543, guid: 83c7e3453e544a842ae96bcfd4b65a43,
+      type: 3}
+  - ID: kobold_archer
+    IsClass: 0
+    ClassName: KoboldArcher
+    UnitPrefab: {fileID: 5644459521263360087, guid: 5d7920143b9913c4f84f5ad21bc050c3,
+      type: 3}
+    UnitFrame: {fileID: 1603191733426158566, guid: cd6feea43e98fc34a93723bee45141a7,
+      type: 3}
+  - ID: kobold_spearman
+    IsClass: 0
+    ClassName: KoboldSpearman
+    UnitPrefab: {fileID: 2879059499519822114, guid: 015bb9ee4e9f8d64ea8b7ea276e6661a,
+      type: 3}
+    UnitFrame: {fileID: 8183371176661132770, guid: a4901b53be651cc49861e7f2ddbbad9c,
+      type: 3}
+  - ID: kobold_spell_caster
+    IsClass: 0
+    ClassName: KoboldSpellCaster
+    UnitPrefab: {fileID: 3273838156526913610, guid: c3f181ec5374bec40b92769f277ac49f,
+      type: 3}
+    UnitFrame: {fileID: 202719952319383708, guid: 501bb54fa3eba274895cdd7badcf7d2c,
+      type: 3}
+  - ID: dragon_lord_class_bot
+    IsClass: 1
+    ClassName: DragonLordClassBot
+    UnitPrefab: {fileID: 7013826564992204299, guid: 483b2394aab1fcb488913b69a482f894,
+      type: 3}
+    UnitFrame: {fileID: 4978057664753341564, guid: 4a79240dfa4e3ec4da30a902e846ecd8,
+      type: 3}
