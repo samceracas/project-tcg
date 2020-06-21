@@ -1,4 +1,5 @@
-﻿using CardGame.Cards.Base;
+﻿using Boo.Lang;
+using CardGame.Cards.Base;
 using Coffee.UIExtensions;
 using Library.Extensions.Unity;
 using System;
@@ -41,6 +42,12 @@ public class CardScript : MonoBehaviour
     private GameObject _cardBase;
     [SerializeField]
     private GameObject _cardFrame;
+
+    [SerializeField]
+    private UIDissolve[] _toDissolve;
+
+    [SerializeField]
+    private GameObject[] _toDisableBeforeDissolve;
 
     private PlayerScript _playerScript;
     private Card _card;
