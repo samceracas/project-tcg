@@ -19,6 +19,7 @@ namespace CardGame.Units.Base
         protected int _accuracy = 100;
         protected Player _owner;
         protected UnitState _unitState;
+        protected UnitRace _race;
         protected Card _card;
         protected string _unitName;
 
@@ -28,6 +29,7 @@ namespace CardGame.Units.Base
             _id = string.Concat(_id.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
             _instanceID = instanceID == null ? Utils.Random.RandomString(15) : instanceID;
             _unitState = UnitState.GettingReady;
+            _race = UnitRace.Human;
         }
 
         public string ID => _id;
@@ -38,6 +40,7 @@ namespace CardGame.Units.Base
         public Player Owner { get => _owner; set => _owner = value; }
         public int Damage { get => _damage; set => _damage = value; }
         public UnitState State => _unitState;
+        public UnitRace Race => _race;
         public Card Card { get => _card; set => _card = value; }
 
         public void ReceiveDamage(Unit dealer, int damage, EffectType damageSource)

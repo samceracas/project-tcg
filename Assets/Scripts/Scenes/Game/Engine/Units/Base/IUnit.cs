@@ -12,8 +12,20 @@ namespace CardGame.Units.Base
         Dead
     }
 
+    public enum UnitRace
+    {
+        Dragon,
+        Human,
+        Elemental,
+        Undead,
+        Mech,
+        Goblin,
+        Beast
+    }
+
     interface IUnit
     {
+        UnitRace Race { get; }
         UnitState State { get; }
         string ID { get; }
         string UnitName { get; }

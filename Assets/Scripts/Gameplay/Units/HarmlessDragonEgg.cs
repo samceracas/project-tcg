@@ -9,6 +9,7 @@ namespace Gameplay.Units
             _unitName = "Harmless Dragon Egg";
             _health = _maxHealth = 1;
             _damage = 0;
+            _race = UnitRace.Dragon;
 
             //description: It's a harmless dragon egg, what could it possibly do?
             //Last Breath: Summon an angry dragon momma 6/6

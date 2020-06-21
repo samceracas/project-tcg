@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.azixmcaze.unityserializabledictionary": "1.2.0",
+    "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git",
     "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
     "com.unity.2d.animation": "3.2.2",
     "com.unity.2d.psdimporter": "2.1.4",
@@ -52,6 +53,10 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "lock": {
+    "com.coffee.softmask-for-ugui": {
+      "revision": "HEAD",
+      "hash": "03a7b84fa229fb20dbe67f69971cb0f481509acf"
+    },
     "com.dbrizov.naughtyattributes": {
       "revision": "upm",
       "hash": "8361c4c50a4f375cfac3cdb67ebd3babf15c42d8"

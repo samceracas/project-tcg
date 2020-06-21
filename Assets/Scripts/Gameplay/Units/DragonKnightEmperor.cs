@@ -9,6 +9,7 @@ namespace Gameplay.Units
             _unitName = "Dragon Knight Emperor";
             _health = _maxHealth = 5;
             _damage = 5;
+            _race = UnitRace.Dragon;
 
             //passive: increase dragons health and attack by 2/2
             //cost: 5

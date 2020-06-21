@@ -9,6 +9,7 @@ namespace Gameplay.Units
             _unitName = "Kobold Archer";
             _health = _maxHealth = 3;
             _damage = 2;
+            _race = UnitRace.Dragon;
 
             //Nimble: can attack twice in 1 turn
             //max stacks: 4

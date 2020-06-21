@@ -10,6 +10,7 @@ namespace Gameplay.Units
             _unitName = "Imperial Dragon Sovereign";
             _health = _maxHealth = 11;
             _damage = 11;
+            _race = UnitRace.Dragon;
 
             //cost: 10
             //active: Set all enemy dragons to 1/1

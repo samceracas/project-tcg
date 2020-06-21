@@ -9,6 +9,7 @@ namespace Gameplay.Units
             _unitName = "Fallen Dragon Knight";
             _health = _maxHealth = 4;
             _damage = 2;
+            _race = UnitRace.Dragon;
 
             //Spawn: summon a 1/1 draconian squire
             //Provoke: Forces enemies to focus this unit.
