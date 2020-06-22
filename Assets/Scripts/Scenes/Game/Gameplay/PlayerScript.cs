@@ -309,6 +309,8 @@ public class PlayerScript : MonoBehaviour
                 {
                     GameObject cardInstance = Instantiate(cardEntry.data.prefab, _gameCanvas.transform);
                     CardScript cardScript = cardInstance.GetComponent<CardScript>();
+                    //@todo add config for default card scale
+                    cardScript.DefaultScale = new Vector3(0.45f, 0.45f, 0.45f);
                     cardScript.Ready(this, drawnCard);
                     cardScript.ShowStats();
 
@@ -331,15 +333,16 @@ public class PlayerScript : MonoBehaviour
         {
             GameObject cardInstance = Instantiate(cardEntry.data.prefab, _gameCanvas.transform);
             CardScript cardScript = cardInstance.GetComponent<CardScript>();
+            cardScript.DefaultScale = new Vector3(0.45f, 0.45f, 0.45f);
             cardScript.Ready(this, card);
 
             cardInstance.transform.position = _deckObject.transform.position;
 
             cardInstance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             float delay = 0.5f;
-
+            
             LeanTween
-                .scale(cardInstance, new Vector3(0.45f, 0.45f, 0.45f), delay)
+                .scale(cardInstance, cardScript.DefaultScale, delay)
                 .setDelay(_addToHandDelay)
                 .setOnComplete(() =>
                 {
