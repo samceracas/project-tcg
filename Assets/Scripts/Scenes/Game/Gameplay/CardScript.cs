@@ -41,6 +41,8 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     private GameObject _cardBase;
     [SerializeField]
+    private GameObject _cardBack;
+    [SerializeField]
     private GameObject _cardFrame;
 
     [SerializeField]
@@ -73,6 +75,8 @@ public class CardScript : MonoBehaviour
         _flipCount = 0;
         _cardFace = CardFace.Back;
 
+        HideStats();
+
         _cardUseHitbox = GameObject.FindGameObjectWithTag("CardUseHitbox").GetComponent<RectTransform>();
 
         EventTrigger trigger = GetComponent<EventTrigger>();
@@ -99,13 +103,14 @@ public class CardScript : MonoBehaviour
         if (_cardFace == CardFace.Back)
         {
             _cardFace = CardFace.Front;
-            _cardBase.transform.SetAsFirstSibling();
+            _cardBack.SetActive(false);
             ShowStats();
         }
         else
         {
             _cardFace = CardFace.Back;
             _cardBase.transform.SetAsLastSibling();
+            _cardBack.SetActive(true);
             HideStats();
         }
     }
@@ -147,7 +152,12 @@ public class CardScript : MonoBehaviour
 
     public void Dissolve(Action onComplete = null, float speed = 1f)
     {
-        UIDissolve[] dissolves = GetComponentsInChildren<UIDissolve>();
+        foreach (GameObject toDisable in _toDisableBeforeDissolve)
+        {
+            toDisable.SetActive(false);
+        }
+
+        UIDissolve[] dissolves = _toDissolve;
         LeanTween
             .value(gameObject, 0f, 1f, speed)
             .setOnUpdate((float value) =>
@@ -162,7 +172,11 @@ public class CardScript : MonoBehaviour
 
     public void UndoDissolve()
     {
-        UIDissolve[] dissolves = GetComponentsInChildren<UIDissolve>();
+        foreach (GameObject toDisable in _toDisableBeforeDissolve)
+        {
+            toDisable.SetActive(true);
+        }
+        UIDissolve[] dissolves = _toDissolve;
         foreach (UIDissolve dissolve in dissolves)
         {
             dissolve.effectFactor = 0f;

@@ -16,7 +16,7 @@ MonoBehaviour:
   - key: dragon_knight_emperor_card
     data:
       className: DragonKnightEmperorCard
-      prefab: {fileID: 7487430269438181199, guid: b0112a28c2f2c3345870454d21e529e3,
+      prefab: {fileID: 2374313645060889387, guid: af24c7d9529a6c046803c146681e95e5,
         type: 3}
   - key: dragon_lamprey_card
     data:

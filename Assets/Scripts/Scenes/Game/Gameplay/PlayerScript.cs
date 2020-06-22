@@ -310,6 +310,7 @@ public class PlayerScript : MonoBehaviour
                     GameObject cardInstance = Instantiate(cardEntry.data.prefab, _gameCanvas.transform);
                     CardScript cardScript = cardInstance.GetComponent<CardScript>();
                     cardScript.Ready(this, drawnCard);
+                    cardScript.ShowStats();
 
                     _cardsOnHand.Add(cardInstance);
 
