@@ -1,4 +1,5 @@
 ﻿using Boo.Lang;
+using CardGame;
 using CardGame.Cards.Base;
 using Coffee.UIExtensions;
 using Library.Extensions.Unity;
@@ -75,6 +76,7 @@ public class CardScript : MonoBehaviour
     private Vector3 _beforeDragRotation;
     private CardUseHitboxState _cardUseHitboxState;
 
+    private int _beforeHoverSiblingIndex;
     private CardDetailsState _cardDetailsState;
 
     public Card Card => _card;
@@ -305,18 +307,20 @@ public class CardScript : MonoBehaviour
     {
         if (_cardDetailsState == CardDetailsState.Shown) return;
         _cardDetailsState = CardDetailsState.Shown;
-        
+
+        _beforeHoverSiblingIndex = gameObject.transform.GetSiblingIndex();
         gameObject.transform.SetAsLastSibling();
 
         LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseInOutBack();
         LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseInOutBack();
-        LeanTween.moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.4f), 0.2f).setEaseInOutBack();
+        LeanTween.moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 3.2f), 0.2f).setEaseInOutBack();
     }
 
     public void HideCardDetails()
     {
         if (_cardDetailsState == CardDetailsState.Hidden) return;
 
+        gameObject.transform.SetSiblingIndex(_beforeHoverSiblingIndex);
         _cardDetailsState = CardDetailsState.Hidden;
         ReturnToPreviousPosition();
     }
