@@ -50,8 +50,8 @@ namespace CardGame.Cards.Base
         public virtual void Apply()
         {
             //this will only trigger when the card is a unit card
-            SpawnUnit();
             //only override when card is a spell card
+            SpawnUnit();
         }
 
         protected virtual bool CanSpawnUnit()

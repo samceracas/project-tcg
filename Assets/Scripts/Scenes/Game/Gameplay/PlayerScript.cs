@@ -121,7 +121,7 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    private void SpawnUnit(UnitData entry, int spawnIndex, Unit unit)
+    private void SpawnUnit(UnitData entry, Unit unit)
     {
         SpawnPointScript spawn = null;
         for (int i = 0; i < _spawnPoints.Count; i++)
@@ -136,6 +136,8 @@ public class PlayerScript : MonoBehaviour
 
         if (spawn == null) return;
 
+        GameScript.AnimationState = GameScript.GameAnimationState.Animating;
+
         GameObject obj = Instantiate(entry.UnitPrefab, spawn.transform);
         UnitScript unitScript = obj.GetComponent<UnitScript>();
 
@@ -146,7 +148,7 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    public void ReArrangeCardsOnHand(float speed)
+    public void ReArrangeCardsOnHand(float speed, bool setIdleOnComplete = true)
     {
         if (_cardsOnHand.Count <= 0) return;
         float totalCardCount = _cardsOnHand.Count;
@@ -182,7 +184,10 @@ public class PlayerScript : MonoBehaviour
                 .setEaseInOutCubic()
                 .setOnComplete(() =>
                 {
-                    GameScript.AnimationState = GameScript.GameAnimationState.Idle;
+                    if (setIdleOnComplete)
+                    {
+                        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
+                    }
                 });
             startX -= quarterWidth * cardsCountPercent;
             i++;
@@ -197,6 +202,8 @@ public class PlayerScript : MonoBehaviour
             CardScript cardScript = cardObject.GetComponent<CardScript>();
             if (cardScript.Card == card)
             {
+                cardScript.ClearEvents();
+
                 toRemove = cardObject;
                 LeanTween.cancel(cardObject);
 
@@ -216,7 +223,6 @@ public class PlayerScript : MonoBehaviour
                 seq.append(() => cardScript.Dissolve(() =>
                 {
                     _player.UseCard(card);
-                    GameScript.AnimationState = GameScript.GameAnimationState.Idle;
                     Destroy(cardObject);
                 }, 0.3f));
                 break;
@@ -228,7 +234,7 @@ public class PlayerScript : MonoBehaviour
             _cardsOnHand.Remove(toRemove);
         }
 
-        ReArrangeCardsOnHand(0.5f);
+        ReArrangeCardsOnHand(0.5f, false);
     }
 
     private void ReadySpawnPoints()
@@ -340,7 +346,8 @@ public class PlayerScript : MonoBehaviour
 
             cardInstance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             float delay = 0.5f;
-            
+
+            GameScript.AnimationState = GameScript.GameAnimationState.Animating;
             LeanTween
                 .scale(cardInstance, cardScript.DefaultScale, delay)
                 .setDelay(_addToHandDelay)
@@ -353,6 +360,7 @@ public class PlayerScript : MonoBehaviour
                     _cardsOnHand.Add(cardInstance);
                     ReArrangeCardsOnHand(delay);
                     cardScript.FlipCard(true);
+                    GameScript.AnimationState = GameScript.GameAnimationState.Idle;
                 });
             _addToHandDelay += delay;
         }
@@ -379,14 +387,14 @@ public class PlayerScript : MonoBehaviour
                             target = opponent.UnitsOnField[tokens[2]];
                         }
                         sequence.append(() => _player.RequestCommandAttack(_player.UnitsOnField[tokens[1]], target));
-                        sequence.append(2f);
+                        sequence.append(3f);
                         break;
                     case "use_card":
                         sequence.append(() => _player.RequestUseCard(_player.CardsOnHand[int.Parse(tokens[1])]));
-                        sequence.append(2f);
+                        sequence.append(3f);
                         break;
                 }
-                sequence.append(0.5f);
+                sequence.append(1f);
             }
 
             if (_player.Game.GameState == GameState.InProgress)
@@ -403,9 +411,8 @@ public class PlayerScript : MonoBehaviour
             bool isPlayer = unit is Player;
             string entryKey = isPlayer ? ((IPlayerClass)_player).ClassID : unit.ID;
 
-            int spawnIndex = unit.Owner.UnitsOnField.Count - 1;
             UnitData entry = _unitMap.GetUnitDataByID(entryKey);
-            SpawnUnit(entry, spawnIndex, unit);
+            SpawnUnit(entry, unit);
         }
     }
 

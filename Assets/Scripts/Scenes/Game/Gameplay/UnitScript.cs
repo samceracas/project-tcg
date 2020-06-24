@@ -103,7 +103,10 @@ public class UnitScript : MonoBehaviour
     private UnitTarget _targetingData;
 
 
-
+    private void Start()
+    {
+        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
+    }
 
 
     public SpriteRenderer Sprite => _unitSprite;
@@ -137,12 +140,14 @@ public class UnitScript : MonoBehaviour
         _sleepEffect.SetActive(true);
         UpdateTexts();
         ReadyEvents();
+
     }
 
 
 
     public void StartAttackTargetSelect()
     {
+        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating) return;
         if (!_playerScript.IsMe || !_playerScript.Player.IsMyTurn) return;
         if (_unit.State == UnitState.GettingReady) return;
 
@@ -293,6 +298,8 @@ public class UnitScript : MonoBehaviour
         Vector3 targetPos = _currentTarget.transform.position;
         targetPos.x += (_currentTarget.Sprite.bounds.size.x) * (!_playerScript.IsMe ? 1 : -1);
         LTSeq seq = LeanTween.sequence();
+        
+        GameScript.AnimationState = GameScript.GameAnimationState.Animating;
 
         seq.append(LeanTween.move(gameObject, targetPos, 0.5f));
         seq.append(0.2f);
@@ -304,7 +311,11 @@ public class UnitScript : MonoBehaviour
         seq.append(LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f));
         seq.append(() => _unitSprite.flipX = !_unitSprite.flipX);
         seq.append(() => _unit.SetGettingReady());
-        seq.append(() => _unitAction = UnitAction.Idle);
+        seq.append(() =>
+        {
+            _unitAction = UnitAction.Idle;
+            GameScript.AnimationState = GameScript.GameAnimationState.Idle;
+        });
     }
 
     public virtual void AnimateDeath()

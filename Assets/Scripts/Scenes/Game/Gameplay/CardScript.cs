@@ -28,6 +28,12 @@ public class CardScript : MonoBehaviour
         Shown
     }
 
+    public enum CardDragState
+    {
+        Dragging,
+        NotDragging
+    }
+
     [Header("UI References")]
 
     [SerializeField]
@@ -78,16 +84,27 @@ public class CardScript : MonoBehaviour
 
     private int _beforeHoverSiblingIndex;
     private CardDetailsState _cardDetailsState;
+    private bool _isHovered = false;
+
+    private CardDragState _cardDragState;
+
+    private float _screenWidthRatio = -1f;
+    private float _screenHeightRatio = -1f;
+    private RectTransform _cardRectTransform;
+
 
     public Card Card => _card;
     public Vector3 DefaultScale { get; set; }
     public Vector2 CardDimensions {
         get {
-            var rectTransform = _cardFrame.GetComponent<RectTransform>();
-            float widthFactor = Screen.width / 1920f;
-            float heithFactor = Screen.height / 1080f;
-            int width = Mathf.FloorToInt(rectTransform.rect.width * widthFactor);
-            int height = Mathf.FloorToInt(rectTransform.rect.height * heithFactor);
+            if (_screenWidthRatio == -1f)
+            {
+                _screenWidthRatio = Screen.width / 1920f;
+                _screenHeightRatio = Screen.height / 1080f;
+            }
+
+            int width = Mathf.FloorToInt(_cardRectTransform.rect.width * _screenWidthRatio);
+            int height = Mathf.FloorToInt(_cardRectTransform.rect.height * _screenHeightRatio);
             return new Vector2(width, height);
         }
     }
@@ -97,9 +114,10 @@ public class CardScript : MonoBehaviour
         _flipCount = 0;
         _cardFace = CardFace.Back;
         _cardDetailsState = CardDetailsState.Hidden;
+        _cardDragState = CardDragState.NotDragging;
 
-        HideStats();
 
+        _cardRectTransform = _cardFrame.GetComponent<RectTransform>();
         _cardUseHitbox = GameObject.FindGameObjectWithTag("CardUseHitbox").GetComponent<RectTransform>();
 
         EventTrigger trigger = GetComponentInChildren<EventTrigger>();
@@ -121,13 +139,27 @@ public class CardScript : MonoBehaviour
 
         entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerEnter;
-        entry.callback.AddListener((data) => { ShowCardDetails(); });
+        entry.callback.AddListener((data) => {
+            _isHovered = true;
+        });
         trigger.triggers.Add(entry);
 
         entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerExit;
-        entry.callback.AddListener((data) => { HideCardDetails(); });
+        entry.callback.AddListener((data) => {
+            _isHovered = false;
+            HideCardDetails(); 
+        });
         trigger.triggers.Add(entry);
+    }
+
+    private void Update()
+    {
+        Debug.Log(GameScript.AnimationState);
+        if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
+        {
+            ShowCardDetails();
+        }
     }
 
     private void ToggleBackFace()
@@ -230,6 +262,12 @@ public class CardScript : MonoBehaviour
         }
     }
 
+    public void ClearEvents()
+    {
+        EventTrigger trigger = GetComponentInChildren<EventTrigger>();
+        trigger.triggers.Clear();
+    }
+
     public void HideStats()
     {
         _chargeContainer.SetActive(false);
@@ -274,11 +312,16 @@ public class CardScript : MonoBehaviour
 
     public void BeginCardDrag(PointerEventData pointerEventData)
     {
-        if (!_card.IsUsable()) return;
-
+        if (!_card.IsUsable() || GameScript.AnimationState == GameScript.GameAnimationState.Animating)
+        {
+            pointerEventData.pointerDrag = null;
+            return;
+        }
+        
         _cardUseHitboxState = CardUseHitboxState.NotIntersecting;
         _beforeDragPosition = transform.position;
         _beforeDragRotation = transform.eulerAngles;
+        _cardDragState = CardDragState.Dragging;
 
         Cursor.visible = false;
         LeanTween.scale(gameObject, DefaultScale * 2f, 0.2f).setEaseOutCubic();
@@ -287,10 +330,12 @@ public class CardScript : MonoBehaviour
 
     public void CheckUseCard(PointerEventData baseEventData)
     {
-        Cursor.visible = true;
-        RectTransform rectTransform = GetComponent<RectTransform>();
+        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating) return;
 
-        if (!rectTransform.Overlaps(_cardUseHitbox, true) || !_card.IsUsable())
+        Cursor.visible = true;
+        _cardDragState = CardDragState.NotDragging;
+
+        if (!_cardRectTransform.Overlaps(_cardUseHitbox, true) || !_card.IsUsable())
         {
             ReturnToPreviousPosition();
             return;
@@ -303,17 +348,32 @@ public class CardScript : MonoBehaviour
         }, 0.2f);
     }
 
+    public void DragCard(PointerEventData baseEventData)
+    {
+        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating || _cardDragState == CardDragState.NotDragging || !_card.IsUsable()) return;
+
+        transform.position = baseEventData.position;
+    }
+
     public void ShowCardDetails()
     {
-        if (_cardDetailsState == CardDetailsState.Shown) return;
+        if (_cardDetailsState == CardDetailsState.Shown || GameScript.AnimationState == GameScript.GameAnimationState.Animating) return;
         _cardDetailsState = CardDetailsState.Shown;
 
         _beforeHoverSiblingIndex = gameObject.transform.GetSiblingIndex();
         gameObject.transform.SetAsLastSibling();
 
+        GameScript.AnimationState = GameScript.GameAnimationState.Animating;
+
         LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseInOutBack();
         LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseInOutBack();
-        LeanTween.moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 3.2f), 0.2f).setEaseInOutBack();
+        LeanTween
+            .moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.8f), 0.2f)
+            .setEaseInOutBack()
+            .setOnComplete(() =>
+            {
+                GameScript.AnimationState = GameScript.GameAnimationState.Idle;
+            });
     }
 
     public void HideCardDetails()
@@ -323,13 +383,6 @@ public class CardScript : MonoBehaviour
         gameObject.transform.SetSiblingIndex(_beforeHoverSiblingIndex);
         _cardDetailsState = CardDetailsState.Hidden;
         ReturnToPreviousPosition();
-    }
-
-    public void DragCard(PointerEventData baseEventData)
-    {
-        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating || !_card.IsUsable()) return;
-
-        transform.position = baseEventData.position;
     }
 
     public void Ready(PlayerScript player, Card card)
@@ -355,5 +408,7 @@ public class CardScript : MonoBehaviour
             _attackText.text = _card.Attack.ToString();
             _healthText.text = _card.Health.ToString();
         }
+
+        HideStats();
     }
 }

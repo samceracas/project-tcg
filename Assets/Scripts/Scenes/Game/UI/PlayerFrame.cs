@@ -95,7 +95,7 @@ public class PlayerFrame : MonoBehaviour
 
     public void EndTurn()
     {
-        if (_isMe)
+        if (_isMe && GameScript.AnimationState == GameScript.GameAnimationState.Idle)
         {
             _playerScript.Player.EndTurn();
         }

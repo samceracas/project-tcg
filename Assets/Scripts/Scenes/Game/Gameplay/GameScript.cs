@@ -26,9 +26,6 @@ public class GameScript : MonoBehaviour
     private GameObject _playerPrefab;
 
     [SerializeField]
-    private static GameAnimationState _gameAnimationState;
-
-    [SerializeField]
     private GameState _state = GameState.Waiting;
 
     [Header("Events")]
@@ -43,6 +40,7 @@ public class GameScript : MonoBehaviour
     private Game _game;
     private CancellationTokenSource _countdownTokenSource;
     private int _roundCountdown;
+    private static GameAnimationState _gameAnimationState;
 
     public Game Game => _game;
     public static GameAnimationState AnimationState { get => _gameAnimationState; set => _gameAnimationState = value; }
