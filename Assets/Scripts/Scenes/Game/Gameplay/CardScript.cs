@@ -156,7 +156,6 @@ public class CardScript : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(GameScript.AnimationState);
         _cardHoverCountdown -= Time.deltaTime;
         if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
         {
