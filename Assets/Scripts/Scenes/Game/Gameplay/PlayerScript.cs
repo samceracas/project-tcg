@@ -170,7 +170,6 @@ public class PlayerScript : MonoBehaviour
             float twistForThisCard = startTwist + (i * twistPerCard);
             float newX = startX + ((i) * (cardWidth / 2f));
 
-            GameScript.AnimationState = GameScript.GameAnimationState.Animating;
 
             LeanTween
                 .move(cardInstance, new Vector3(
@@ -181,14 +180,7 @@ public class PlayerScript : MonoBehaviour
                 .setEaseInOutCubic();
             LeanTween
                 .rotateZ(cardInstance, -twistForThisCard, speed)
-                .setEaseInOutCubic()
-                .setOnComplete(() =>
-                {
-                    if (setIdleOnComplete)
-                    {
-                        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
-                    }
-                });
+                .setEaseInOutCubic();
             startX -= quarterWidth * cardsCountPercent;
             i++;
         }

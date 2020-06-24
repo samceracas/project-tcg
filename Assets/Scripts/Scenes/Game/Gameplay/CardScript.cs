@@ -84,6 +84,7 @@ public class CardScript : MonoBehaviour
 
     private int _beforeHoverSiblingIndex;
     private CardDetailsState _cardDetailsState;
+    private float _cardHoverCountdown;
     private bool _isHovered = false;
 
     private CardDragState _cardDragState;
@@ -156,6 +157,7 @@ public class CardScript : MonoBehaviour
     private void Update()
     {
         Debug.Log(GameScript.AnimationState);
+        _cardHoverCountdown -= Time.deltaTime;
         if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
         {
             ShowCardDetails();
@@ -207,7 +209,6 @@ public class CardScript : MonoBehaviour
         else
         {
             _flipCount = 1;
-            GameScript.AnimationState = GameScript.GameAnimationState.Animating;
             LeanTween
                 .rotateY(gameObject, 90f, 0.2f)
                 .setLoopPingPong(1)
@@ -217,10 +218,6 @@ public class CardScript : MonoBehaviour
                     if (_flipCount % 2 == 0)
                     {
                         ToggleBackFace();
-                    }
-                    if (_flipCount % 3 == 0)
-                    {
-                        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
                     }
                 })
                 .setOnCompleteOnRepeat(true)
@@ -301,19 +298,15 @@ public class CardScript : MonoBehaviour
 
     public void ReturnToPreviousPosition()
     {
-        GameScript.AnimationState = GameScript.GameAnimationState.Animating;
         _playerScript.ReArrangeCardsOnHand(0.2f);
         LeanTween.scale(gameObject, DefaultScale, 0.2f);
-        LeanTween.delayedCall(0.2f, () =>
-        {
-            GameScript.AnimationState = GameScript.GameAnimationState.Idle;
-        });
     }
 
     public void BeginCardDrag(PointerEventData pointerEventData)
     {
         if (!_card.IsUsable() || GameScript.AnimationState == GameScript.GameAnimationState.Animating)
         {
+            _cardDragState = CardDragState.NotDragging;
             pointerEventData.pointerDrag = null;
             return;
         }
@@ -330,7 +323,7 @@ public class CardScript : MonoBehaviour
 
     public void CheckUseCard(PointerEventData baseEventData)
     {
-        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating) return;
+        if (GameScript.AnimationState == GameScript.GameAnimationState.Animating || _cardDragState == CardDragState.NotDragging) return;
 
         Cursor.visible = true;
         _cardDragState = CardDragState.NotDragging;
@@ -357,23 +350,18 @@ public class CardScript : MonoBehaviour
 
     public void ShowCardDetails()
     {
-        if (_cardDetailsState == CardDetailsState.Shown || GameScript.AnimationState == GameScript.GameAnimationState.Animating) return;
+        if (_cardDetailsState == CardDetailsState.Shown || GameScript.AnimationState == GameScript.GameAnimationState.Animating || _cardHoverCountdown > 0f) return;
         _cardDetailsState = CardDetailsState.Shown;
 
         _beforeHoverSiblingIndex = gameObject.transform.GetSiblingIndex();
         gameObject.transform.SetAsLastSibling();
-
-        GameScript.AnimationState = GameScript.GameAnimationState.Animating;
+        _cardHoverCountdown = 1f;
 
         LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseInOutBack();
         LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseInOutBack();
         LeanTween
             .moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.8f), 0.2f)
-            .setEaseInOutBack()
-            .setOnComplete(() =>
-            {
-                GameScript.AnimationState = GameScript.GameAnimationState.Idle;
-            });
+            .setEaseInOutBack();
     }
 
     public void HideCardDetails()
