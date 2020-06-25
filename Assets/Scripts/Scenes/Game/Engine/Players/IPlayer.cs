@@ -9,6 +9,7 @@ namespace CardGame.Players
     {
         string Name { get; }
         int Charges { get; }
+        int TotalCards { get; }
         bool IsSimulated { get; set; }
         bool IsMyTurn { get; }
         Dictionary<string, Unit> UnitsOnField { get; }
