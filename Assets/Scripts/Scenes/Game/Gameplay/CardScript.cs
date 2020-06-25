@@ -113,9 +113,12 @@ public class CardScript : MonoBehaviour
     private void Update()
     {
         _cardHoverCountdown -= Time.deltaTime;
-        if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
+        if (Input.GetAxis("Mouse X") != 0f || Input.GetAxis("Mouse Y") != 0f)
         {
-            ShowCardDetails();
+            if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
+            {
+                ShowCardDetails();
+            }
         }
     }
 
@@ -140,13 +143,14 @@ public class CardScript : MonoBehaviour
     {
         if (visible)
         {
-            LeanTween.alpha(_cardDescriptionContainer.GetComponent<RectTransform>(), 1f, speed);
-            LeanTween.alphaText(_cardText.rectTransform, 1f, speed);
+            LeanTween.alpha(_cardDescriptionContainer.GetComponent<RectTransform>(), 0.5f, speed);
+            LeanTween.alpha(_cardText.gameObject, 0.5f, speed);
+
         }
         else
         {
             LeanTween.alpha(_cardDescriptionContainer.GetComponent<RectTransform>(), 0f, speed);
-            LeanTween.alphaText(_cardText.rectTransform, 0f, speed);
+            LeanTween.alpha(_cardText.gameObject, 0f, speed);
         }
     }
 
@@ -265,7 +269,7 @@ public class CardScript : MonoBehaviour
             pointerEventData.pointerDrag = null;
             return;
         }
-        
+
         _cardUseHitboxState = CardUseHitboxState.NotIntersecting;
         _beforeDragPosition = transform.position;
         _beforeDragRotation = transform.eulerAngles;
@@ -317,14 +321,18 @@ public class CardScript : MonoBehaviour
         LeanTween
             .moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.8f), 0.2f)
             .setEaseOutCubic();
+        SetDescriptionVisible(true);
     }
 
     public void HideCardDetails()
     {
         if (_cardDetailsState == CardDetailsState.Hidden) return;
 
+        SetDescriptionVisible(false);
         gameObject.transform.SetSiblingIndex(_beforeHoverSiblingIndex);
         _cardDetailsState = CardDetailsState.Hidden;
+
+
         ReturnToPreviousPosition();
     }
 
@@ -380,14 +388,16 @@ public class CardScript : MonoBehaviour
 
         entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerEnter;
-        entry.callback.AddListener((data) => {
+        entry.callback.AddListener((data) =>
+        {
             _isHovered = true;
         });
         trigger.triggers.Add(entry);
 
         entry = new EventTrigger.Entry();
         entry.eventID = EventTriggerType.PointerExit;
-        entry.callback.AddListener((data) => {
+        entry.callback.AddListener((data) =>
+        {
             _isHovered = false;
             HideCardDetails();
         });
