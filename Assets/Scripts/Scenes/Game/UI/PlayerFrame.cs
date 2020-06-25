@@ -42,44 +42,11 @@ public class PlayerFrame : MonoBehaviour
         _playerScript = playerScript;
         _charges = new List<GameObject>();
 
-        _gameController.Game.EventGameStart += () =>
+        playerScript.Player.StartPlayerTurn += () =>
         {
-            foreach (Player player in _gameController.Game.Players)
+            TaskScheduler.Instance.Queue(() =>
             {
-                UpdateCardInDeckCount(player);
-            }
-        };
-
-        _gameController.Game.InterceptorService.RegisterInterceptor(InterceptorEvents.CardUse, new Interceptor()
-        {
-            AllowRunInSimulation = false,
-            Priority = -1,
-            After = (state) =>
-            {
-                Card usedCard = state.Arguments.card;
-
-                if (usedCard.Player == _playerScript.Player)
-                {
-                    TaskScheduler.Instance.Queue(new UnityTask(delegate 
-                    {
-                        UpdateCardInDeckCount(_playerScript.Player);
-                        UpdateChargeCount(_playerScript.Player);
-                    }));
-                }
-                return state;
-            }
-        });
-
-
-        _gameController.Game.InterceptorService.RegisterInterceptor(InterceptorEvents.StartTurn, new Interceptor()
-        {
-            AllowRunInSimulation = false,
-
-            After = (state) =>
-            {
-                Player currentTurn = state.Arguments.currentTurn;
-
-                if (currentTurn == _playerScript.Player)
+                if (playerScript.IsMe)
                 {
                     TaskScheduler.Instance.Queue(() =>
                     {
@@ -87,10 +54,27 @@ public class PlayerFrame : MonoBehaviour
                         UpdateChargeCount(_playerScript.Player);
                     });
                 }
-                TaskScheduler.Instance.Queue(new UnityTask(delegate { _turnText.text = currentTurn == _playerScript.Player && _isMe ? "Your turn" : $"{currentTurn.Name}'s turn."; }));
-                return state;
+                _turnText.text = _playerScript.Player.IsMyTurn && _isMe ? "Your turn" : $"{_playerScript.Player.Name}'s turn.";
+            });
+
+        };
+
+        playerScript.Player.CardUsed = (card) =>
+        {
+            TaskScheduler.Instance.Queue(() => 
+            {
+                UpdateCardInDeckCount(_playerScript.Player);
+                UpdateChargeCount(_playerScript.Player);
+            });
+        };
+
+        _gameController.Game.EventGameStart += () =>
+        {
+            foreach (Player player in _gameController.Game.Players)
+            {
+                UpdateCardInDeckCount(player);
             }
-        });
+        };
     }
 
     public void EndTurn()

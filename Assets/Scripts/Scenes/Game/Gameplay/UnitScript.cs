@@ -298,7 +298,7 @@ public class UnitScript : MonoBehaviour
         Vector3 targetPos = _currentTarget.transform.position;
         targetPos.x += (_currentTarget.Sprite.bounds.size.x) * (!_playerScript.IsMe ? 1 : -1);
         LTSeq seq = LeanTween.sequence();
-        
+
         GameScript.AnimationState = GameScript.GameAnimationState.Animating;
 
         seq.append(LeanTween.move(gameObject, targetPos, 0.5f));
@@ -397,14 +397,11 @@ public class UnitScript : MonoBehaviour
         });
     }
 
-    private void OnPlayerEndTurn(Player player)
+    private void OnPlayerEndTurn()
     {
         TaskScheduler.Instance.Queue(() =>
         {
-            if (player == _playerScript.Player)
-            {
-                EndTargetting(true);
-            }
+            EndTargetting(true);
         });
     }
 
@@ -413,7 +410,7 @@ public class UnitScript : MonoBehaviour
         _playerScript.Player.RequestCommandAttack += OnRequestCommandAttack;
         _playerScript.Player.UnitKill += OnUnitKill;
         _playerScript.Player.UnitDamaged += OnUnitDamaged;
-        _playerScript.Player.Game.EventEndPlayerTurn += OnPlayerEndTurn;
+        _playerScript.Player.EndPlayerTurn += OnPlayerEndTurn;
         _playerScript.Player.UnitReadyStateChanged += OnUnitReadyStateChanged;
 
         EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
@@ -520,7 +517,7 @@ public class UnitScript : MonoBehaviour
         _playerScript.Player.RequestCommandAttack -= OnRequestCommandAttack;
         _playerScript.Player.UnitKill -= OnUnitKill;
         _playerScript.Player.UnitDamaged -= OnUnitDamaged;
-        _playerScript.Player.Game.EventEndPlayerTurn -= OnPlayerEndTurn;
+        _playerScript.Player.EndPlayerTurn -= OnPlayerEndTurn;
         _playerScript.Player.UnitReadyStateChanged -= OnUnitReadyStateChanged;
 
         _spawnPointScript.SetUnOccupied();

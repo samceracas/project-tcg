@@ -1,4 +1,5 @@
 ﻿using CardGame;
+using CardGame.Players;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,10 +38,13 @@ public class GameScript : MonoBehaviour
     [SerializeField]
     private TMP_Text _countdownText;
 
+
+    private static GameAnimationState _gameAnimationState;
+
     private Game _game;
     private CancellationTokenSource _countdownTokenSource;
     private int _roundCountdown;
-    private static GameAnimationState _gameAnimationState;
+    private CountdownTimer.Entry _roundTimer;
 
     public Game Game => _game;
     public static GameAnimationState AnimationState { get => _gameAnimationState; set => _gameAnimationState = value; }
@@ -53,10 +57,23 @@ public class GameScript : MonoBehaviour
         _game = new Game(DateTime.Now.ToString());
         SetState(GameState.Waiting);
 
-        _game.EventStartPlayerTurn += (a) => ResetRoundTimer();
+        _roundTimer = new CountdownTimer.Entry();
+        _roundTimer.CountdownTime = _game.Settings.MaxTimePerRound;
+
+        _roundTimer.OnUpdate += (entry) =>
+        {
+            _countdownText.text = _roundTimer.TimeInSeconds.ToString("D2");
+        };
+
+        _roundTimer.OnComplete += (entry) =>
+        {
+            _game.NextTurn();
+            _roundTimer.Reset();
+        };
+
         _game.EventGameEnd += () =>
         {
-            StopRoundTimer();
+            _roundTimer.Stop();
             Debug.Log("--------------- END -------------");
         };
 
@@ -64,12 +81,16 @@ public class GameScript : MonoBehaviour
         AddPlayer("sam 2", "dragon_lord_class_bot");
 
         ReadyPlayers();
-        Invoke("StartGame", 3f);
-    }
 
-    private void Update()
-    {
-        _countdownText.text = _roundCountdown.ToString("D2");
+        foreach (Player player in _game.Players)
+        {
+            player.EndPlayerTurn += () =>
+            {
+                _roundTimer.Reset();
+            };
+        }
+
+        Invoke("StartGame", 1f);
     }
 
     private void ReadyPlayers()
@@ -79,7 +100,9 @@ public class GameScript : MonoBehaviour
 
     private void StartGame()
     {
-        TaskScheduler.Instance.Queue(new UnityTask(delegate {
+        TaskScheduler.Instance.Queue(new UnityTask(delegate
+        {
+            CountdownTimer.Instance.AddEntry(_roundTimer);
             _game.StartGame();
             SetState(GameState.InProgress);
         }));
@@ -87,28 +110,15 @@ public class GameScript : MonoBehaviour
 
     private void StartRoundTimer()
     {
-        _countdownTokenSource = new CancellationTokenSource();
         _roundCountdown = _game.Settings.MaxTimePerRound;
-        Task.Run(async () =>
-        {
-            while (_game.GameState == CardGame.GameState.InProgress)
-            {
-                await Task.Delay(1000, _countdownTokenSource.Token);
-                _roundCountdown = Mathf.Clamp(--_roundCountdown, 0, _game.Settings.MaxTimePerRound);
-            }
-        });
     }
 
     private void StopRoundTimer()
     {
-        if (_countdownTokenSource == null) return;
-        _countdownTokenSource.Cancel();
     }
 
     private void ResetRoundTimer()
     {
-        StopRoundTimer();
-        StartRoundTimer();
     }
 
     private void OnDestroy()

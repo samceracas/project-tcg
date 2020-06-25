@@ -32,8 +32,6 @@ namespace CardGame
         protected GameSettings _gameSettings;
 
 
-        public Action<Player> EventStartPlayerTurn;
-        public Action<Player> EventEndPlayerTurn;
         public Action EventGameStart;
         public Action EventGameEnd;
 
@@ -59,8 +57,6 @@ namespace CardGame
 
         public void ClearEvents()
         {
-            EventEndPlayerTurn = (a) => { };
-            EventStartPlayerTurn = (a) => { };
             EventGameEnd = () => { };
             EventGameStart = () => { };
         }
@@ -72,10 +68,8 @@ namespace CardGame
 
         public void SetTurn(int playerIndex)
         {
-            //Debug.Log("Player " + CurrentPlayerTurn.Name + "'s turn");
             _currentPlayerTurn = playerIndex;
             CurrentPlayerTurn.StartTurn();
-            EventStartPlayerTurn((Player)CurrentPlayerTurn);
         }
 
         public Player GetOpponent(Player player)
@@ -102,7 +96,6 @@ namespace CardGame
                 _roundCount = (_turnCount / _players.Count) + 1;
                 Debug.Log("Round: " + _roundCount);
             }
-            EventEndPlayerTurn((Player)CurrentPlayerTurn);
             _currentPlayerTurn = ++_currentPlayerTurn % _players.Count;
             SetTurn(_currentPlayerTurn);
         }

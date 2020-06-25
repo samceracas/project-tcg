@@ -324,7 +324,7 @@ public class CardScript : MonoBehaviour
         LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseOutCubic();
         LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseOutCubic();
         LeanTween
-            .moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.8f), 0.2f)
+            .moveY(gameObject, Screen.height * 0.17f, 0.2f)
             .setEaseOutCubic();
         SetDescriptionVisible(true);
     }

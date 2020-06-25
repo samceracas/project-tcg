@@ -33,7 +33,6 @@ namespace CardGame.Players
         protected UnitSelector _unitSelector;
 
         protected Game _gameInstance;
-        protected CancellationTokenSource tokenSource;
 
         protected int _startTurnEffectorIndex;
         protected int _startTurnCount;
@@ -48,6 +47,7 @@ namespace CardGame.Players
         public Action<Unit, Unit> RequestCommandAttack;
 
         public Action<Card, bool> CardAddedToHand;
+        public Action<Card> CardUsed;
 
         public Action<Unit> UnitSpawn;
         public Action<Unit> UnitKill;
@@ -55,6 +55,10 @@ namespace CardGame.Players
         public Action<Unit> UnitReadyStateChanged = (a) => { };
 
         public Action<string> MoveError;
+
+
+        public Action StartPlayerTurn;
+        public Action EndPlayerTurn;
 
         //move queue events
         public Action<Queue<string>> MoveQueueReady;
@@ -109,6 +113,7 @@ namespace CardGame.Players
             RequestCommandAttack = (a, b) => { };
 
             CardAddedToHand = (a, b) => { };
+            CardUsed = (a) => { };
 
             UnitKill = (a) => { };
             UnitSpawn = (a) => { };
@@ -116,6 +121,9 @@ namespace CardGame.Players
             UnitReadyStateChanged = (a) => { };
 
             MoveError = (a) => { };
+
+            StartPlayerTurn = () => { };
+            EndPlayerTurn = () => { };
 
             MoveQueueReady = (a) => { };
         }
@@ -227,7 +235,6 @@ namespace CardGame.Players
             Action wrappedMethod = () =>
             {
                 SetReady();
-                RunTurnTimer();
 
                 foreach (KeyValuePair<string, Unit> pair in _unitsOnField)
                 {
@@ -240,6 +247,11 @@ namespace CardGame.Players
 
                 //draw a card
                 DrawCards(1);
+
+                if (!IsSimulated)
+                {
+                    StartPlayerTurn();
+                }
             };
 
             dynamic parameters = new ExpandoObject();
@@ -256,13 +268,12 @@ namespace CardGame.Players
 
             Action wrappedMethod = () =>
             {
-                if (tokenSource != null)
-                {
-                    tokenSource.Cancel();
-                }
-
                 if (!gameOver)
                 {
+                    if (!IsSimulated)
+                    {
+                        EndPlayerTurn();
+                    }
                     _gameInstance.NextTurn();
                 }
             };
@@ -278,24 +289,6 @@ namespace CardGame.Players
         {
             _effectorStack.MoveTo(_startTurnEffectorIndex);
             StartTurn();
-        }
-
-        private void RunTurnTimer()
-        {
-            if (tokenSource != null)
-            {
-                tokenSource.Cancel();
-            }
-
-            tokenSource = new CancellationTokenSource();
-            Task.Run(async () =>
-            {
-                await Task.Delay(_gameInstance.Settings.MaxTimePerRound * 1000, tokenSource.Token);
-                if (!tokenSource.IsCancellationRequested)
-                {
-                    EndTurn();
-                }
-            });
         }
 
         public virtual void UseCard(Card card)
@@ -348,6 +341,8 @@ namespace CardGame.Players
                         {
                             ((IAimable)selectedCard).Apply(unit);
                         }
+
+                        CardUsed(selectedCard);
                     };
                     _gameInstance.InterceptorService.RunInterceptor(InterceptorEvents.CardUse, cardUseAction, parameters);
                 };
@@ -362,6 +357,7 @@ namespace CardGame.Players
                     _effectorStack.ApplyEffector(useCardEffector);
                     //apply card
                     selectedCard.Apply();
+                    CardUsed(selectedCard);
                 };
 
                 _gameInstance.InterceptorService.RunInterceptor(InterceptorEvents.CardUse, cardUseAction, parameters);
