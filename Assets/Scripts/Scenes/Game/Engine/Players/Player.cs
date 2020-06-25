@@ -85,6 +85,7 @@ namespace CardGame.Players
 
         public string Name => _name;
         public int Charges => _charges;
+        public int TotalCards => CardsOnDeck.Count + CardsOnHand.Count + CardsOnGraveyard.Count;
         public bool IsSimulated { get => _isSimulated; set => _isSimulated = value; }
         public bool IsMyTurn { get => _gameInstance.CurrentPlayerTurn == this; }
         public List<Card> CardsOnDeck => _cardsOnDeck;

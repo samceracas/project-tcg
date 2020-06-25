@@ -144,13 +144,18 @@ public class CardScript : MonoBehaviour
         if (visible)
         {
             LeanTween.alpha(_cardDescriptionContainer.GetComponent<RectTransform>(), 0.5f, speed);
-            LeanTween.alpha(_cardText.gameObject, 0.5f, speed);
-
+            LeanTween.value(_cardDescription.alpha, 1f, speed).setOnUpdate((float value) =>
+            {
+                _cardDescription.alpha = value;
+            });
         }
         else
         {
             LeanTween.alpha(_cardDescriptionContainer.GetComponent<RectTransform>(), 0f, speed);
-            LeanTween.alpha(_cardText.gameObject, 0f, speed);
+            LeanTween.value(_cardDescription.alpha, 0f, speed).setOnUpdate((float value) =>
+            {
+                _cardDescription.alpha = value;
+            });
         }
     }
 

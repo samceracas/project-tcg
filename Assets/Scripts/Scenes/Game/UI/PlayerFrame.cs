@@ -114,7 +114,6 @@ public class PlayerFrame : MonoBehaviour
 
     private void UpdateCardInDeckCount(Player player)
     {
-        int total = player.CardsOnHand.Count + player.CardsOnGraveyard.Count + player.CardsOnDeck.Count;
-        _deckCountText.text = player.CardsOnHand.Count + "/" + total;
+        _deckCountText.text = player.CardsOnDeck.Count + "/" + player.TotalCards;
     }
 }
