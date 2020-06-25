@@ -110,50 +110,6 @@ public class CardScript : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        _flipCount = 0;
-        _cardFace = CardFace.Back;
-        _cardDetailsState = CardDetailsState.Hidden;
-        _cardDragState = CardDragState.NotDragging;
-
-
-        _cardRectTransform = _cardFrame.GetComponent<RectTransform>();
-        _cardUseHitbox = GameObject.FindGameObjectWithTag("CardUseHitbox").GetComponent<RectTransform>();
-
-        EventTrigger trigger = GetComponentInChildren<EventTrigger>();
-
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.Drag;
-        entry.callback.AddListener((data) => { DragCard((PointerEventData)data); });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.BeginDrag;
-        entry.callback.AddListener((data) => { BeginCardDrag((PointerEventData)data); });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.EndDrag;
-        entry.callback.AddListener((data) => { CheckUseCard((PointerEventData)data); });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerEnter;
-        entry.callback.AddListener((data) => {
-            _isHovered = true;
-        });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerExit;
-        entry.callback.AddListener((data) => {
-            _isHovered = false;
-            HideCardDetails(); 
-        });
-        trigger.triggers.Add(entry);
-    }
-
     private void Update()
     {
         _cardHoverCountdown -= Time.deltaTime;
@@ -349,18 +305,18 @@ public class CardScript : MonoBehaviour
 
     public void ShowCardDetails()
     {
-        if (_cardDetailsState == CardDetailsState.Shown || GameScript.AnimationState == GameScript.GameAnimationState.Animating || _cardHoverCountdown > 0f) return;
+        if (_cardDetailsState == CardDetailsState.Shown || _cardHoverCountdown > 0f) return;
         _cardDetailsState = CardDetailsState.Shown;
 
         _beforeHoverSiblingIndex = gameObject.transform.GetSiblingIndex();
         gameObject.transform.SetAsLastSibling();
         _cardHoverCountdown = 1f;
 
-        LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseInOutBack();
-        LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseInOutBack();
+        LeanTween.rotate(gameObject, Vector3.zero, 0.2f).setEaseOutCubic();
+        LeanTween.scale(gameObject, DefaultScale * 1.5f, 0.2f).setEaseOutCubic();
         LeanTween
             .moveY(gameObject, transform.position.y + ((CardDimensions.y * DefaultScale.y * 1.5f) / 2.8f), 0.2f)
-            .setEaseInOutBack();
+            .setEaseOutCubic();
     }
 
     public void HideCardDetails()
@@ -395,6 +351,47 @@ public class CardScript : MonoBehaviour
             _attackText.text = _card.Attack.ToString();
             _healthText.text = _card.Health.ToString();
         }
+
+        _flipCount = 0;
+        _cardFace = CardFace.Back;
+        _cardDetailsState = CardDetailsState.Hidden;
+        _cardDragState = CardDragState.NotDragging;
+
+
+        _cardRectTransform = _cardFrame.GetComponent<RectTransform>();
+        _cardUseHitbox = GameObject.FindGameObjectWithTag("CardUseHitbox").GetComponent<RectTransform>();
+
+        EventTrigger trigger = GetComponentInChildren<EventTrigger>();
+
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.Drag;
+        entry.callback.AddListener((data) => { DragCard((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.BeginDrag;
+        entry.callback.AddListener((data) => { BeginCardDrag((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.EndDrag;
+        entry.callback.AddListener((data) => { CheckUseCard((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => {
+            _isHovered = true;
+        });
+        trigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerExit;
+        entry.callback.AddListener((data) => {
+            _isHovered = false;
+            HideCardDetails();
+        });
+        trigger.triggers.Add(entry);
 
         HideStats();
     }

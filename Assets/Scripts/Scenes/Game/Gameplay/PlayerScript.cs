@@ -311,6 +311,7 @@ public class PlayerScript : MonoBehaviour
                     cardScript.DefaultScale = new Vector3(0.45f, 0.45f, 0.45f);
                     cardScript.Ready(this, drawnCard);
                     cardScript.ShowStats();
+                    cardScript.ClearEvents();
 
                     _cardsOnHand.Add(cardInstance);
 
