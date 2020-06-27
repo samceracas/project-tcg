@@ -87,9 +87,9 @@ namespace CardGame
             return null;
         }
 
-        public void NextTurn()
+        public bool NextTurn()
         {
-            if (_gameState == GameState.Ended) return;
+            if (_gameState == GameState.Ended) return false;
             _turnCount++;
             if (_turnCount % _players.Count == 0)
             {
@@ -98,6 +98,7 @@ namespace CardGame
             }
             _currentPlayerTurn = ++_currentPlayerTurn % _players.Count;
             SetTurn(_currentPlayerTurn);
+            return true;
         }
 
         public void ReadyPlayers()

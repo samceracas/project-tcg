@@ -72,7 +72,7 @@ namespace CardGame.Cards.Base
 
         public virtual bool IsUsable()
         {
-            return _player.Charges >= _cost && _player.IsMyTurn;
+            return _player.Charges >= _cost && _player.IsMyTurn && _player.Game.GameState == GameState.InProgress;
         }
     }
 }

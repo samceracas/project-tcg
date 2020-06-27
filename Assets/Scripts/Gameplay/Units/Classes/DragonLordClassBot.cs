@@ -69,11 +69,7 @@ namespace Gameplay.Units.Classes
             }
 
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new ImperialDragonSovereignCard(this));
-            }
+            this.AddCardOnDeck(new ImperialDragonSovereignCard(this));
         }
 
         public string ClassName => "Dragon Lord";

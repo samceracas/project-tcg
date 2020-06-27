@@ -54,14 +54,12 @@ public class CountdownTimer : MonoBehaviour
 
         public void Stop(bool callComplete = false)
         {
+            _currentTime = 0f;
+            _isFinished = true;
+
             if (callComplete)
             {
-                _currentTime = 0f;
-                _isFinished = true;
                 OnComplete?.Invoke(this);
-            } else
-            {
-                _isFinished = true;
             }
         }
 
