@@ -9,7 +9,7 @@ namespace Gameplay.Units.Classes
         public DragonLordClass(string name, Game game) : base(name, game)
         {
             _health = _maxHealth = 30;
-            _damage = 1;
+            _damage = 999;
             //a class which specializes in summoning dragons
             //buffs spawned dragons
 
@@ -63,11 +63,7 @@ namespace Gameplay.Units.Classes
             }
 
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new ImperialDragonSovereignCard(this));
-            }
+            this.AddCardOnDeck(new ImperialDragonSovereignCard(this));
         }
 
         public string ClassName => "Dragon Lord";

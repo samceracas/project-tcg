@@ -20,6 +20,12 @@ namespace CardGame.Effectors
                 return;
             }
 
+            if (_player.Game.GameState == GameState.Ended)
+            {
+                _player.MoveError($"Game ended!");
+                return;
+            }
+
             _target.Owner = _player;
             _target.Card = _card;
             _target.Spawn();
