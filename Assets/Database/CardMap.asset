@@ -21,7 +21,7 @@ MonoBehaviour:
   - key: dragon_lamprey_card
     data:
       className: DragonLampreyCard
-      prefab: {fileID: 7487430269438181199, guid: b0112a28c2f2c3345870454d21e529e3,
+      prefab: {fileID: 3523379206843913483, guid: 38442221b634927499b66e651af0a62c,
         type: 3}
   - key: fallen_dragon_knight_card
     data:
