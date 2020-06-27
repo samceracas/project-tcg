@@ -17,8 +17,14 @@ namespace CardGame.Cards.Base
         string ID { get; }
         string Name { get; }
         string Description { get; }
-        int Cost { get; }
+        int Cost { get; set; }
+        int DefaultCost { get; }
         CardType Type { get; }
+        UnitRace Race { get; }
+        
+        bool IsUnitCard { get; }
+
+        int CostModifiedState { get; }
 
         int Attack { get; set; }
         int Health { get; set; }

@@ -89,7 +89,7 @@ public class GameScript : MonoBehaviour
 
         foreach (Player player in _game.Players)
         {
-            player.EndPlayerTurn += () =>
+            player.EventEndPlayerTurn += () =>
             {
                 _roundTimer.Reset();
             };

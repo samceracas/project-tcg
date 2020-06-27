@@ -20,7 +20,8 @@ namespace CardGame.Units.Base
         Undead,
         Mech,
         Goblin,
-        Beast
+        Beast,
+        None
     }
 
     interface IUnit

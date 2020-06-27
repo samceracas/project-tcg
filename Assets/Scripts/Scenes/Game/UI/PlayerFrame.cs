@@ -42,7 +42,7 @@ public class PlayerFrame : MonoBehaviour
         _playerScript = playerScript;
         _charges = new List<GameObject>();
 
-        playerScript.Player.StartPlayerTurn += () =>
+        playerScript.Player.EventStartPlayerTurn += () =>
         {
             TaskScheduler.Instance.Queue(() =>
             {
@@ -59,7 +59,7 @@ public class PlayerFrame : MonoBehaviour
 
         };
 
-        playerScript.Player.CardUsed = (card) =>
+        playerScript.Player.EventCardUsed = (card) =>
         {
             TaskScheduler.Instance.Queue(() => 
             {

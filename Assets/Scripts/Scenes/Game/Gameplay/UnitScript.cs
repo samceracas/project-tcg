@@ -408,10 +408,10 @@ public class UnitScript : MonoBehaviour
     private void ReadyEvents()
     {
         _playerScript.Player.RequestCommandAttack += OnRequestCommandAttack;
-        _playerScript.Player.UnitKill += OnUnitKill;
-        _playerScript.Player.UnitDamaged += OnUnitDamaged;
-        _playerScript.Player.EndPlayerTurn += OnPlayerEndTurn;
-        _playerScript.Player.UnitReadyStateChanged += OnUnitReadyStateChanged;
+        _playerScript.Player.EventUnitKill += OnUnitKill;
+        _playerScript.Player.EventUnitDamaged += OnUnitDamaged;
+        _playerScript.Player.EventEndPlayerTurn += OnPlayerEndTurn;
+        _playerScript.Player.EventUnitReadyStateChanged += OnUnitReadyStateChanged;
 
         EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
 
@@ -515,10 +515,10 @@ public class UnitScript : MonoBehaviour
     private void Kill()
     {
         _playerScript.Player.RequestCommandAttack -= OnRequestCommandAttack;
-        _playerScript.Player.UnitKill -= OnUnitKill;
-        _playerScript.Player.UnitDamaged -= OnUnitDamaged;
-        _playerScript.Player.EndPlayerTurn -= OnPlayerEndTurn;
-        _playerScript.Player.UnitReadyStateChanged -= OnUnitReadyStateChanged;
+        _playerScript.Player.EventUnitKill -= OnUnitKill;
+        _playerScript.Player.EventUnitDamaged -= OnUnitDamaged;
+        _playerScript.Player.EventEndPlayerTurn -= OnPlayerEndTurn;
+        _playerScript.Player.EventUnitReadyStateChanged -= OnUnitReadyStateChanged;
 
         _spawnPointScript.SetUnOccupied();
         Destroy(gameObject);

@@ -62,7 +62,7 @@ namespace CardGame.Players
 
             if (!IsSimulated)
             {
-                MoveQueueReady.Invoke(evaluatedMove);
+                EventMoveQueueReady.Invoke(evaluatedMove);
             }
         }
 

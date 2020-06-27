@@ -16,13 +16,13 @@ namespace CardGame.Effectors
         {
             if (_player.UnitsOnField.Count >= 7)
             {
-                _player.MoveError($"Cannot spawn {_target.UnitName}, battlefield is full.");
+                _player.EventMoveError($"Cannot spawn {_target.UnitName}, battlefield is full.");
                 return;
             }
 
             if (_player.Game.GameState == GameState.Ended)
             {
-                _player.MoveError($"Game ended!");
+                _player.EventMoveError($"Game ended!");
                 return;
             }
 

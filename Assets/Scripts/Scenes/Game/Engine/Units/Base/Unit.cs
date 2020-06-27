@@ -50,7 +50,7 @@ namespace CardGame.Units.Base
 
             if (!_owner.IsSimulated)
             {
-                _owner.UnitDamaged(this, damage, damageSource);
+                _owner.EventUnitDamaged(this, damage, damageSource);
             }
 
             if (_health <= 0)
@@ -178,13 +178,13 @@ namespace CardGame.Units.Base
         public void SetReady()
         {
             _unitState = UnitState.Ready;
-            _owner.UnitReadyStateChanged(this);
+            _owner.EventUnitReadyStateChanged(this);
         }
 
         public void SetGettingReady()
         {
             _unitState = UnitState.GettingReady;
-            _owner.UnitReadyStateChanged(this);
+            _owner.EventUnitReadyStateChanged(this);
         }
     }
 }

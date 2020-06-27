@@ -411,9 +411,9 @@ public class PlayerScript : MonoBehaviour
 
     private void ReadyEvents()
     {
-        _player.CardAddedToHand += OnCardAddedToHand;
+        _player.EventCardAddedToHand += OnCardAddedToHand;
         _player.RequestUseCard += OnRequestUseCard;
-        _player.MoveQueueReady += OnMoveQueueReady;
-        _player.UnitSpawn += OnUnitSpawn;
+        _player.EventMoveQueueReady += OnMoveQueueReady;
+        _player.EventUnitSpawn += OnUnitSpawn;
     }
 }
