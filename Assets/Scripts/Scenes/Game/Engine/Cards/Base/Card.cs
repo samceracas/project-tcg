@@ -59,7 +59,10 @@ namespace CardGame.Cards.Base
                     _costModifiedState = Math.Abs(_costModifiedState) / _costModifiedState;
                 }
 
-                EventCardCostUpdated();
+                if (!_player.IsSimulated)
+                {
+                    EventCardCostUpdated();
+                }
             }
         }
 
@@ -103,9 +106,7 @@ namespace CardGame.Cards.Base
         {
             if (_unit != null && _cardType == CardType.Unit && CanSpawnUnit())
             {
-                SpawnEffector spawnEffector = new SpawnEffector(_unit);
-                spawnEffector.Card = this;
-                spawnEffector.Player = _player;
+                SpawnEffector spawnEffector = new SpawnEffector(_player, _unit);
                 _player.EffectorStack.ApplyEffector(spawnEffector);
             }
         }

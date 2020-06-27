@@ -21,48 +21,48 @@ namespace Gameplay.Units.Classes
             //  
 
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new HarmlessDragonEggCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new HarmlessDragonEggCard(this));
+            //}
 
             //add cards to deck
-            for (int k = 0; k < 4; k++)
+            for (int k = 0; k < 8; k++)
             {
                 this.AddCardOnDeck(new DragonLampreyCard(this));
             }
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new KoboldSpellCasterCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new KoboldSpellCasterCard(this));
+            //}
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new KoboldArcherCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new KoboldArcherCard(this));
+            //}
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new DragonKnightEmperorCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new DragonKnightEmperorCard(this));
+            //}
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new FallenDragonKnightCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new FallenDragonKnightCard(this));
+            //}
 
 
-            //add cards to deck
-            for (int k = 0; k < 4; k++)
-            {
-                this.AddCardOnDeck(new KoboldSpearmanCard(this));
-            }
+            ////add cards to deck
+            //for (int k = 0; k < 4; k++)
+            //{
+            //    this.AddCardOnDeck(new KoboldSpearmanCard(this));
+            //}
 
 
             this.AddCardOnDeck(new ImperialDragonSovereignCard(this));

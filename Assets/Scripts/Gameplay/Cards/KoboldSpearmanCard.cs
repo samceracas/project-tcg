@@ -13,7 +13,7 @@ namespace Gameplay.Cards
             _name = "Kobold Spearman";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new KoboldSpearman(instanceID);
+            _unit = new KoboldSpearman(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

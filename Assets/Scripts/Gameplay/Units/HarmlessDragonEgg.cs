@@ -1,10 +1,12 @@
-﻿using CardGame.Units.Base;
+﻿using CardGame.Cards.Base;
+using CardGame.Players;
+using CardGame.Units.Base;
 
 namespace Gameplay.Units
 {
     public class HarmlessDragonEgg : Unit
     {
-        public HarmlessDragonEgg(string instanceID = null) : base(instanceID)
+        public HarmlessDragonEgg(Card card, Player player, string instanceID = null) : base(card, player, instanceID)
         {
             _unitName = "Harmless Dragon Egg";
             _health = _maxHealth = 1;

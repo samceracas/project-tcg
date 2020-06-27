@@ -274,10 +274,10 @@ public class UnitScript : MonoBehaviour
         _targetingData.currentTarget = null;
     }
 
-    public virtual void DoDamage(LTSeq seq, Vector2 targetPos, UnitScript currentTarget, bool retaliate = false)
+    public virtual void DoDamage(LTSeq seq, Vector2 targetPos, UnitScript currentTarget, bool checkDeath = false)
     {
         float targetXOffset = currentTarget.Sprite.bounds.extents.x * (!_playerScript.IsMe ? 1 : -1);
-        if (retaliate)
+        if (checkDeath)
         {
             targetXOffset = (currentTarget.Sprite.bounds.extents.x / 4) * (!_playerScript.IsMe ? -1 : 1);
         }
@@ -288,7 +288,7 @@ public class UnitScript : MonoBehaviour
             Instantiate(_impactEffectPrefab, currentTarget.Sprite.transform));
         seq.append(() =>
         {
-            _unit.Attack(currentTarget.Unit, retaliate);
+            _unit.Attack(currentTarget.Unit, checkDeath);
         });
         seq.append(0.5f);
     }
@@ -304,11 +304,17 @@ public class UnitScript : MonoBehaviour
         seq.append(LeanTween.move(gameObject, targetPos, 0.5f));
         seq.append(0.2f);
 
-        DoDamage(seq, targetPos, _currentTarget);
-        _currentTarget.DoDamage(seq, targetPos, this, true);
+        DoDamage(seq, targetPos, _currentTarget, false);
+        _currentTarget.DoDamage(seq, targetPos, this, false);
 
         seq.append(() => _unitSprite.flipX = !_unitSprite.flipX);
         seq.append(LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f));
+        seq.append(() =>
+        {
+            _currentTarget.Unit.CheckDeath(_unit);
+            _unit.CheckDeath(_currentTarget.Unit);
+            //check death
+        });
         seq.append(() => _unitSprite.flipX = !_unitSprite.flipX);
         seq.append(() => _unit.SetGettingReady());
         seq.append(() =>
@@ -352,11 +358,11 @@ public class UnitScript : MonoBehaviour
 
             _sleepEffect.SetActive(false);
             _playerScript.RemoveUnit(this);
-            Invoke("AnimateDeath", 1f);
+            AnimateDeath();
         }
     }
 
-    private void ShowStatusFloater(EffectType effectType, int damage = -1, bool iconOnly = false)
+    private void ShowStatusFloater(EffectType effectType, int value = -1, bool iconOnly = false, float duration = 2f)
     {
         float scale = 1f;
         GameObject floaterInstance = Instantiate(_statusNumberFloater);
@@ -366,13 +372,22 @@ public class UnitScript : MonoBehaviour
         pos.y += _unitSprite.bounds.size.y;
         floaterInstance.transform.position = pos;
 
-        if (damage >= 8f || effectType == EffectType.Death)
+        Color color = Color.white;
+
+        if (effectType == EffectType.Heal)
         {
+            color = Color.green;
+        }
+
+        if (value >= 5f || effectType == EffectType.Death)
+        {
+            color = Color.red;
             scale = 1.5f;
+            duration *= 1.5f;
         }
 
         StatusNumberFloaterScript statusNumberFloater = floaterInstance.GetComponent<StatusNumberFloaterScript>();
-        statusNumberFloater.Show(effectType, damage, iconOnly, scale, 1f, 1.2f);
+        statusNumberFloater.Show(effectType, value, iconOnly, scale, 1f, duration, color);
     }
 
     private void OnUnitReadyStateChanged()
@@ -380,14 +395,22 @@ public class UnitScript : MonoBehaviour
         _sleepEffect.SetActive(_unit.State == UnitState.GettingReady);
     }
 
-    private void OnUnitDamaged(int damage, EffectType damageSource)
+    private void OnUnitDamaged(int damage, EffectType type)
     {
         TaskScheduler.Instance.Queue(() =>
         {
             LeanTween.color(_unitSprite.gameObject, Color.red, 0.2f).setLoopPingPong(1);
             UpdateTexts();
             Camera.main.GetComponent<CameraShaker>().ShakeOnce(3f, 10f, 0.1f, 0.1f);
-            ShowStatusFloater(damageSource, damage);
+            ShowStatusFloater(type, damage, false);
+        });
+    }
+    private void OnUnitHealed(int amount, EffectType type)
+    {
+        TaskScheduler.Instance.Queue(() =>
+        {
+            UpdateTexts();
+            ShowStatusFloater(type, amount, false);
         });
     }
 
@@ -401,11 +424,14 @@ public class UnitScript : MonoBehaviour
 
     private void ReadyEvents()
     {
+        _unit.ReadyEvents();
+
         _playerScript.Player.RequestCommandAttack += OnRequestCommandAttack;
         _playerScript.Player.EventUnitKill += OnUnitKill;
         _playerScript.Player.EventEndPlayerTurn += OnPlayerEndTurn;
         _unit.EventUnitReadyStateChanged += OnUnitReadyStateChanged;
         _unit.EventUnitDamaged += OnUnitDamaged;
+        _unit.EventUnitHealed += OnUnitHealed;
 
         EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
 
@@ -511,8 +537,8 @@ public class UnitScript : MonoBehaviour
         _playerScript.Player.RequestCommandAttack -= OnRequestCommandAttack;
         _playerScript.Player.EventUnitKill -= OnUnitKill;
         _playerScript.Player.EventEndPlayerTurn -= OnPlayerEndTurn;
-        _unit.EventUnitReadyStateChanged -= OnUnitReadyStateChanged;
-        _unit.EventUnitDamaged -= OnUnitDamaged;
+
+        _unit.ClearEvents();
 
         _spawnPointScript.SetUnOccupied();
         Destroy(gameObject);

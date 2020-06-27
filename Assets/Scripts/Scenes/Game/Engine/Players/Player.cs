@@ -51,7 +51,6 @@ namespace CardGame.Players
 
         public Action<Unit> EventUnitSpawn;
         public Action<Unit> EventUnitKill;
-        public Action<Unit, int, EffectType> EventUnitDamaged;
 
         public Action<string> EventMoveError;
 
@@ -63,7 +62,7 @@ namespace CardGame.Players
         public Action<Queue<string>> EventMoveQueueReady;
         #endregion
 
-        public Player(string name, Game game) : base(null)
+        public Player(string name, Game game) : base(null, null, null)
         {
             _name = name;
             _id = "player:" + _name;
@@ -79,7 +78,6 @@ namespace CardGame.Players
             _unitsOnField = new Dictionary<string, Unit>();
             _unitsDied = new Dictionary<string, Unit>();
             _cardsOnGraveyard = new List<Card>();
-
             _effectorStack = new EffectorStack();
 
             _unitSelector = new UnitSelector();
@@ -116,7 +114,6 @@ namespace CardGame.Players
 
             EventUnitKill = (a) => { };
             EventUnitSpawn = (a) => { };
-            EventUnitDamaged = (a, b, c) => { };
 
             EventMoveError = (a) => { };
 
@@ -217,8 +214,7 @@ namespace CardGame.Players
             });
 
             //spawn player unit
-            SpawnEffector spawnEffector = new SpawnEffector(this);
-            spawnEffector.Player = this;
+            SpawnEffector spawnEffector = new SpawnEffector(this, this);
             _effectorStack.ApplyEffector(spawnEffector);
 
 
@@ -374,7 +370,7 @@ namespace CardGame.Players
             Action<List<Unit>> wrappedMethod = (units) =>
             {
                 //_playerActionEvents.CommandAttack(unitSelected, units[0]);
-                unitSelected.Attack(units[0], false);
+                unitSelected.Attack(units[0], true, true);
             };
 
             _unitSelector.StartSelect(1, wrappedMethod, (unit) =>

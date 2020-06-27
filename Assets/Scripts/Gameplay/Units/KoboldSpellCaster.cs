@@ -1,10 +1,12 @@
-﻿using CardGame.Units.Base;
+﻿using CardGame.Cards.Base;
+using CardGame.Players;
+using CardGame.Units.Base;
 
 namespace Gameplay.Units
 {
     public class KoboldSpellCaster : Unit
     {
-        public KoboldSpellCaster(string instanceID = null) : base(instanceID)
+        public KoboldSpellCaster(Card card, Player player, string instanceID = null) : base(card, player, instanceID)
         {
             _unitName = "Kobold Spell Caster";
             _health = _maxHealth = 1;

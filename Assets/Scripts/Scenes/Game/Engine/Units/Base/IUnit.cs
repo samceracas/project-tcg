@@ -31,15 +31,17 @@ namespace CardGame.Units.Base
         string ID { get; }
         string UnitName { get; }
         string InstanceID { get; }
-        void ReceiveDamage(Unit dealer, int damage, EffectType damageSource);
-        void Attack(Unit target, bool fromRetaliation = false);
+        void ReceiveDamage(Unit dealer, int damage, EffectType damageSource, bool checkDeath);
+        void Attack(Unit target, bool checkDeath, bool retaliate);
         void Heal(Unit dealer, int amount);
         void AddCurrentHealth(int amount);
         void Spawn(bool triggerInterceptors = true);
         void Die(bool triggerInterceptors = true);
         void SetGettingReady();
         void SetReady();
+        void ReadyEvents();
         void ClearEvents();
+        void CheckDeath(Unit unit);
         int Health { get; set; }
         int MaxHealth { get; set; }
         int Damage { get; set; }

@@ -13,7 +13,7 @@ namespace Gameplay.Cards
             _name = "Harmless Dragon Egg";
             _description = "It's a harmless dragon egg, what could it possibly do? Last Breath: Summon an angry dragon momma 6/6";
             _cardType = CardType.Unit;
-            _unit = new HarmlessDragonEgg(instanceID);
+            _unit = new HarmlessDragonEgg(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

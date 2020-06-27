@@ -13,7 +13,7 @@ namespace Gameplay.Cards
             _name = "Kobold Spell Caster";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new KoboldSpellCaster(instanceID);
+            _unit = new KoboldSpellCaster(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

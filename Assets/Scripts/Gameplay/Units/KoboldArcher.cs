@@ -1,10 +1,12 @@
-﻿using CardGame.Units.Base;
+﻿using CardGame.Cards.Base;
+using CardGame.Players;
+using CardGame.Units.Base;
 
 namespace Gameplay.Units
 {
     public class KoboldArcher : Unit
     {
-        public KoboldArcher(string instanceID = null) : base(instanceID)
+        public KoboldArcher(Card card, Player player, string instanceID = null) : base(card, player, instanceID)
         {
             _unitName = "Kobold Archer";
             _health = _maxHealth = 3;

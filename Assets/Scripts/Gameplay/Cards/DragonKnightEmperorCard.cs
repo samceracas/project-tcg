@@ -13,7 +13,7 @@ namespace Gameplay.Cards
             _name = "Draconian Knight";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new DragonKnightEmperor(instanceID);
+            _unit = new DragonKnightEmperor(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

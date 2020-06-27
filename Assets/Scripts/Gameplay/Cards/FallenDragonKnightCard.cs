@@ -14,7 +14,7 @@ namespace Gameplay.Cards
             _name = "Fallen Dragon Knight";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new FallenDragonKnight(instanceID);
+            _unit = new FallenDragonKnight(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

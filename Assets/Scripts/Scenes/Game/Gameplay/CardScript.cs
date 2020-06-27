@@ -419,8 +419,8 @@ public class CardScript : MonoBehaviour
             _attackContainer.SetActive(true);
             _healthContainer.SetActive(true);
 
-            _attackText.text = _card.Attack.ToString();
-            _healthText.text = _card.Health.ToString();
+            _attackText.text = _card.Unit.Damage.ToString();
+            _healthText.text = _card.Unit.Health.ToString();
         }
 
         _flipCount = 0;

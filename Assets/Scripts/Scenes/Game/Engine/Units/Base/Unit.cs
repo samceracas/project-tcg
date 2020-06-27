@@ -1,6 +1,7 @@
 ﻿using CardGame.Cards.Base;
 using CardGame.Constants;
 using CardGame.Effectors;
+using CardGame.Events;
 using CardGame.Players;
 using System;
 using System.Dynamic;
@@ -23,17 +24,21 @@ namespace CardGame.Units.Base
         protected Card _card;
         protected string _unitName;
 
-        public Action EventUnitReadyStateChanged;
-        public Action<int, EffectType> EventUnitDamaged;
+        protected Interceptor _deathChecker;
 
-        public Unit(string instanceID = null)
+        public Action EventUnitReadyStateChanged = () => { };
+        public Action<int, EffectType> EventUnitDamaged = (a, b) => { };
+        public Action<int, EffectType> EventUnitHealed = (a, b) => { };
+
+        public Unit(Card card, Player player, string instanceID = null)
         {
             _id = GetType().Name;
             _id = string.Concat(_id.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
             _instanceID = instanceID == null ? Utils.Random.RandomString(15) : instanceID;
             _unitState = UnitState.GettingReady;
             _race = UnitRace.Human;
-            ClearEvents();
+            _owner = player;
+            _card = card;
         }
 
         public string ID => _id;
@@ -47,9 +52,8 @@ namespace CardGame.Units.Base
         public UnitRace Race => _race;
         public Card Card { get => _card; set => _card = value; }
 
-        public void ReceiveDamage(Unit dealer, int damage, EffectType effectType)
+        public void ReceiveDamage(Unit dealer, int damage, EffectType effectType, bool checkDeath = false)
         {
-
             _health -= damage;
 
             if (!_owner.IsSimulated)
@@ -57,17 +61,9 @@ namespace CardGame.Units.Base
                 EventUnitDamaged(damage, effectType);
             }
 
-            if (_health <= 0)
+            if (checkDeath)
             {
-                _unitState = UnitState.Dead;
-
-                DeathEffector deathEffector = new DeathEffector();
-                deathEffector.Dealer = dealer;
-                deathEffector.Target = this;
-                deathEffector.Player = _owner;
-
-                //apply effector
-                _owner.EffectorStack.ApplyEffector(deathEffector);
+                CheckDeath(dealer);
             }
         }
 
@@ -79,22 +75,16 @@ namespace CardGame.Units.Base
             {
                 _health = _maxHealth;
             }
+
+            if (!_owner.IsSimulated)
+            {
+                EventUnitHealed(amount, EffectType.Heal);
+            }
         }
 
-        public virtual void Attack(Unit target, bool fromRetaliation = false)
+        public virtual void Attack(Unit target, bool checkDeath = false, bool retaliate = false)
         {
-            if ((_unitState == UnitState.Dead && !fromRetaliation) || (_unitState == UnitState.GettingReady && !fromRetaliation)) return;
-
-
-            if ((_unitState == UnitState.Dead && fromRetaliation))
-            {
-                //stay dead
-                _unitState = UnitState.Dead;
-            }
-            else
-            {
-                _unitState = UnitState.Attacking;
-            }
+            _unitState = UnitState.Attacking;
 
 
             dynamic parameters = new ExpandoObject();
@@ -103,20 +93,27 @@ namespace CardGame.Units.Base
 
             Action wrappedMethod = () =>
             {
-                DealDamageEffector effector = new DealDamageEffector(_damage, EffectType.Attack);
+                DealDamageEffector effector = new DealDamageEffector(_damage, EffectType.Attack, checkDeath);
                 effector.Target = target;
                 effector.Dealer = this;
                 effector.Player = _owner;
 
                 _owner.EffectorStack.ApplyEffector(effector);
-            };
 
+                if (retaliate)
+                {
+                    target.Attack(this, true, false);
+                }
+            };
             _owner.Game.InterceptorService.RunInterceptor(InterceptorEvents.UnitAttack, wrappedMethod, parameters);
         }
 
         public virtual void Heal(Unit dealer, int amount)
         {
-            if (_unitState == UnitState.Dead) return;
+            if (_unitState == UnitState.Dead)
+            {
+                _unitState = UnitState.GettingReady;
+            }
             dynamic parameters = new ExpandoObject();
 
             parameters.dealer = dealer;
@@ -191,10 +188,31 @@ namespace CardGame.Units.Base
             EventUnitReadyStateChanged();
         }
 
-        public void ClearEvents()
+        public virtual void ReadyEvents()
         {
+        }
+
+        public virtual void ClearEvents()
+        {
+            EventUnitHealed = (a, b) => { };
             EventUnitDamaged = (a, b) => { };
             EventUnitReadyStateChanged = () => { };
+        }
+
+        public void CheckDeath(Unit dealer)
+        {
+            if (_health <= 0)
+            {
+                _unitState = UnitState.Dead;
+
+                DeathEffector deathEffector = new DeathEffector();
+                deathEffector.Dealer = dealer;
+                deathEffector.Target = this;
+                deathEffector.Player = _owner;
+
+                //apply effector
+                _owner.EffectorStack.ApplyEffector(deathEffector);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Gameplay.Cards
             _name = "Kobold Archer";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new KoboldArcher(instanceID);
+            _unit = new KoboldArcher(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

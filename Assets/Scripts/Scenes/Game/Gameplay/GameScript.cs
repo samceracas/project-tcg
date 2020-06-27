@@ -79,6 +79,7 @@ public class GameScript : MonoBehaviour
         _game.EventGameEnd += () =>
         {
             _roundTimer.Stop();
+            CountdownTimer.Instance.RemoveEntry(_roundTimer);
             Debug.Log("--------------- END -------------");
         };
 

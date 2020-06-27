@@ -14,7 +14,7 @@ namespace Gameplay.Cards
             _name = "Imperial Dragon Sovereign";
             _description = "";
             _cardType = CardType.Unit;
-            _unit = new ImperialDragonSovereign(instanceID);
+            _unit = new ImperialDragonSovereign(this, player, instanceID);
             _health = _unit.Health;
             _attack = _unit.Damage;
             _race = UnitRace.Dragon;

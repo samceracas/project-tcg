@@ -1,10 +1,12 @@
-﻿using CardGame.Units.Base;
+﻿using CardGame.Cards.Base;
+using CardGame.Players;
+using CardGame.Units.Base;
 
 namespace Gameplay.Units
 {
     public class FallenDragonKnight : Unit
     {
-        public FallenDragonKnight(string instanceID = null) : base(instanceID)
+        public FallenDragonKnight(Card card, Player player, string instanceID = null) : base(card, player, instanceID)
         {
             _unitName = "Fallen Dragon Knight";
             _health = _maxHealth = 4;

@@ -1,12 +1,14 @@
 ﻿using CardGame.Effectors.Base;
+using CardGame.Players;
 using CardGame.Units.Base;
 
 namespace CardGame.Effectors
 {
     class SpawnEffector : Effector
     {
-        public SpawnEffector(Unit unit) : base()
+        public SpawnEffector(Player player, Unit unit) : base()
         {
+            _player = player;
             _target = unit;
             _id = "spawn_effector";
             _instanceID = Utils.Random.RandomString(15);
@@ -25,9 +27,7 @@ namespace CardGame.Effectors
                 _player.EventMoveError($"Game ended!");
                 return;
             }
-
-            _target.Owner = _player;
-            _target.Card = _card;
+            
             _target.Spawn();
         }
 

@@ -18,17 +18,19 @@ namespace CardGame.Effectors
     {
 
         private EffectType _effectType;
+        private bool _checkDeath;
 
-        public DealDamageEffector(int damage, EffectType damageSource) : base()
+        public DealDamageEffector(int damage, EffectType damageSource, bool checkDeath) : base()
         {
             _id = "deal_damage_effector";
             _damage = damage;
             _effectType = damageSource;
+            _checkDeath = checkDeath;
         }
 
         public override void Apply()
         {
-            _target.ReceiveDamage(_dealer, _damage, _effectType);
+            _target.ReceiveDamage(_dealer, _damage, _effectType, _checkDeath);
         }
 
         public override void Revert()

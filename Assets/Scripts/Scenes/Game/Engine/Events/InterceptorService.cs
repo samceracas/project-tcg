@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace CardGame.Events
 {
@@ -77,6 +78,10 @@ namespace CardGame.Events
 
                 foreach (Interceptor interceptor in _interceptors[eventType])
                 {
+                    if (interceptor == null)
+                    {
+                        Debug.LogError("Interceptor is null");
+                    }
                     if (IsSimulated && !interceptor.AllowRunInSimulation) continue;
 
                     InterceptorState beforeState = new InterceptorState();
