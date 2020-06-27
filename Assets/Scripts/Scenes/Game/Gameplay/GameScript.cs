@@ -67,8 +67,13 @@ public class GameScript : MonoBehaviour
 
         _roundTimer.OnComplete += (entry) =>
         {
-            _game.NextTurn();
-            _roundTimer.Reset();
+            if (_game.NextTurn())
+            {
+                _roundTimer.Reset();
+            } else
+            {
+                _roundTimer.Stop();
+            }
         };
 
         _game.EventGameEnd += () =>
@@ -108,19 +113,6 @@ public class GameScript : MonoBehaviour
         }));
     }
 
-    private void StartRoundTimer()
-    {
-        _roundCountdown = _game.Settings.MaxTimePerRound;
-    }
-
-    private void StopRoundTimer()
-    {
-    }
-
-    private void ResetRoundTimer()
-    {
-    }
-
     private void OnDestroy()
     {
         Debug.Log("Disposing current game");
@@ -153,5 +145,4 @@ public class GameScript : MonoBehaviour
                 break;
         }
     }
-
 }
