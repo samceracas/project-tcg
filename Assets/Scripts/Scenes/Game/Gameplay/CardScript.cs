@@ -169,7 +169,15 @@ public class CardScript : MonoBehaviour
 
     private void UpdateCardCostTexts()
     {
-
+        _chargeText.text = _card.Cost.ToString();
+        _chargeText.color = Color.white;
+        if (_card.CostModifiedState == -1)
+        {
+            _chargeText.color = Color.green;
+        } else if (_card.CostModifiedState == 1)
+        {
+            _chargeText.color = Color.red;
+        }
     }
 
     private void ToggleBackFace()
@@ -402,8 +410,8 @@ public class CardScript : MonoBehaviour
 
         _cardText.text = _card.Name;
         _cardDescription.text = _card.Description;
-        _chargeText.text = _card.Cost.ToString();
 
+        UpdateCardCostTexts();
         SetDescriptionVisible(false, 0f);
         
         if (_card.IsUnitCard)

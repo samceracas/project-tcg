@@ -11,7 +11,7 @@ namespace Gameplay.Units.Classes
         public DragonLordClass(string name, Game game) : base(name, game)
         {
             _health = _maxHealth = 30;
-            _damage = 999;
+            _damage = 1;
             //a class which specializes in summoning dragons
             //buffs spawned dragons
 

@@ -4,6 +4,7 @@ using CardGame.Players;
 using CardGame.Units.Base;
 using System;
 using System.Linq;
+using UnityEngine;
 
 namespace CardGame.Cards.Base
 {
@@ -48,6 +49,7 @@ namespace CardGame.Cards.Base
             }
             set {
                 _cost = value;
+                _cost = Mathf.Clamp(_cost, 0, int.MaxValue);
                 _costModifiedState = _cost - _defaultCost;
 
                 if (_costModifiedState != 0)
