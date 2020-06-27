@@ -39,6 +39,7 @@ namespace CardGame.Units.Base
         void Die(bool triggerInterceptors = true);
         void SetGettingReady();
         void SetReady();
+        void ClearEvents();
         int Health { get; set; }
         int MaxHealth { get; set; }
         int Damage { get; set; }

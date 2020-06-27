@@ -48,12 +48,10 @@ namespace CardGame.Players
 
         public Action<Card, bool> EventCardAddedToHand;
         public Action<Card> EventCardUsed;
-        public Action<Card> EventCardCostUpdated;
 
         public Action<Unit> EventUnitSpawn;
         public Action<Unit> EventUnitKill;
         public Action<Unit, int, EffectType> EventUnitDamaged;
-        public Action<Unit> EventUnitReadyStateChanged = (a) => { };
 
         public Action<string> EventMoveError;
 
@@ -119,7 +117,6 @@ namespace CardGame.Players
             EventUnitKill = (a) => { };
             EventUnitSpawn = (a) => { };
             EventUnitDamaged = (a, b, c) => { };
-            EventUnitReadyStateChanged = (a) => { };
 
             EventMoveError = (a) => { };
 

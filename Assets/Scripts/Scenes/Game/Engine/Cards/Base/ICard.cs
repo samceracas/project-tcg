@@ -23,6 +23,8 @@ namespace CardGame.Cards.Base
         UnitRace Race { get; }
         
         bool IsUnitCard { get; }
+        bool IsSpellCard { get; }
+        bool IsUsable { get; }
 
         int CostModifiedState { get; }
 
@@ -34,6 +36,6 @@ namespace CardGame.Cards.Base
         Effector Effector { get; }
 
         void Apply();
-        bool IsUsable();
+        void ClearEvents();
     }
 }

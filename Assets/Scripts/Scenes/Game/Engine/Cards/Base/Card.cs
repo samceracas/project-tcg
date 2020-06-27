@@ -21,6 +21,8 @@ namespace CardGame.Cards.Base
         protected Unit _unit;
         protected UnitRace _race;
 
+        public Action EventCardCostUpdated;
+
         public Card(Player player, string instanceID = null)
         {
             _id = GetType().Name;
@@ -30,6 +32,7 @@ namespace CardGame.Cards.Base
             _health = -1;
             _race = UnitRace.None;
             _costModifiedState = 0;
+            ClearEvents();
         }
 
         public string ID => _id;
@@ -54,7 +57,7 @@ namespace CardGame.Cards.Base
                     _costModifiedState = Math.Abs(_costModifiedState) / _costModifiedState;
                 }
 
-                _player.EventCardCostUpdated(this);
+                EventCardCostUpdated();
             }
         }
 
@@ -67,6 +70,8 @@ namespace CardGame.Cards.Base
         public Effector Effector => _effector;
 
         public bool IsUnitCard { get => _cardType == CardType.Unit; }
+        public bool IsSpellCard { get => _cardType == CardType.Spell; }
+        public virtual bool IsUsable { get => _player.Charges >= _cost && _player.IsMyTurn && _player.Game.GameState == GameState.InProgress; }
 
         public CardType Type => _cardType;
         public UnitRace Race => _race;
@@ -80,6 +85,11 @@ namespace CardGame.Cards.Base
             //this will only trigger when the card is a unit card
             //only override when card is a spell card
             SpawnUnit();
+        }
+
+        public virtual void ClearEvents()
+        {
+            EventCardCostUpdated = () => { };
         }
 
         protected virtual bool CanSpawnUnit()
@@ -96,11 +106,6 @@ namespace CardGame.Cards.Base
                 spawnEffector.Player = _player;
                 _player.EffectorStack.ApplyEffector(spawnEffector);
             }
-        }
-
-        public virtual bool IsUsable()
-        {
-            return _player.Charges >= _cost && _player.IsMyTurn && _player.Game.GameState == GameState.InProgress;
         }
     }
 }
