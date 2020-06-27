@@ -46,22 +46,21 @@ namespace CardGame.Players
         public Action<Card> RequestUseCard;
         public Action<Unit, Unit> RequestCommandAttack;
 
-        public Action<Card, bool> CardAddedToHand;
-        public Action<Card> CardUsed;
+        public Action<Card, bool> EventCardAddedToHand;
+        public Action<Card> EventCardUsed;
 
-        public Action<Unit> UnitSpawn;
-        public Action<Unit> UnitKill;
-        public Action<Unit, int, EffectType> UnitDamaged;
-        public Action<Unit> UnitReadyStateChanged = (a) => { };
+        public Action<Unit> EventUnitSpawn;
+        public Action<Unit> EventUnitKill;
+        public Action<Unit, int, EffectType> EventUnitDamaged;
 
-        public Action<string> MoveError;
+        public Action<string> EventMoveError;
 
 
-        public Action StartPlayerTurn;
-        public Action EndPlayerTurn;
+        public Action EventStartPlayerTurn;
+        public Action EventEndPlayerTurn;
 
         //move queue events
-        public Action<Queue<string>> MoveQueueReady;
+        public Action<Queue<string>> EventMoveQueueReady;
         #endregion
 
         public Player(string name, Game game) : base(null)
@@ -112,20 +111,19 @@ namespace CardGame.Players
             RequestUseCard = (a) => { };
             RequestCommandAttack = (a, b) => { };
 
-            CardAddedToHand = (a, b) => { };
-            CardUsed = (a) => { };
+            EventCardAddedToHand = (a, b) => { };
+            EventCardUsed = (a) => { };
 
-            UnitKill = (a) => { };
-            UnitSpawn = (a) => { };
-            UnitDamaged = (a, b, c) => { };
-            UnitReadyStateChanged = (a) => { };
+            EventUnitKill = (a) => { };
+            EventUnitSpawn = (a) => { };
+            EventUnitDamaged = (a, b, c) => { };
 
-            MoveError = (a) => { };
+            EventMoveError = (a) => { };
 
-            StartPlayerTurn = () => { };
-            EndPlayerTurn = () => { };
+            EventStartPlayerTurn = () => { };
+            EventEndPlayerTurn = () => { };
 
-            MoveQueueReady = (a) => { };
+            EventMoveQueueReady = (a) => { };
         }
 
         public virtual void AddCardToHand(Card card, bool isDrawn = true)
@@ -140,7 +138,7 @@ namespace CardGame.Players
 
                 if (!IsSimulated)
                 {
-                    CardAddedToHand(card, isDrawn);
+                    EventCardAddedToHand(card, isDrawn);
                 }
             };
 
@@ -178,7 +176,7 @@ namespace CardGame.Players
 
                 if (!IsSimulated)
                 {
-                    UnitKill(unit);
+                    EventUnitKill(unit);
                 }
             }
         }
@@ -192,7 +190,7 @@ namespace CardGame.Players
 
                 if (!IsSimulated)
                 {
-                    UnitSpawn(unit);
+                    EventUnitSpawn(unit);
                 }
             }
         }
@@ -250,7 +248,7 @@ namespace CardGame.Players
 
                 if (!IsSimulated)
                 {
-                    StartPlayerTurn();
+                    EventStartPlayerTurn();
                 }
             };
 
@@ -272,7 +270,7 @@ namespace CardGame.Players
                 {
                     if (!IsSimulated)
                     {
-                        EndPlayerTurn();
+                        EventEndPlayerTurn();
                     }
                     _gameInstance.NextTurn();
                 }
@@ -308,13 +306,13 @@ namespace CardGame.Players
 
             if (_charges - selectedCard.Cost < 0)
             {
-                MoveError("Insufficient charges.");
+                EventMoveError("Insufficient charges.");
                 return;
             }
 
             if (selectedCard.Type == CardType.Unit && _unitsOnField.Count >= 7)
             {
-                MoveError("Battlefield is full.");
+                EventMoveError("Battlefield is full.");
                 return;
             }
 
@@ -342,7 +340,7 @@ namespace CardGame.Players
                             ((IAimable)selectedCard).Apply(unit);
                         }
 
-                        CardUsed(selectedCard);
+                        EventCardUsed(selectedCard);
                     };
                     _gameInstance.InterceptorService.RunInterceptor(InterceptorEvents.CardUse, cardUseAction, parameters);
                 };
@@ -357,7 +355,7 @@ namespace CardGame.Players
                     _effectorStack.ApplyEffector(useCardEffector);
                     //apply card
                     selectedCard.Apply();
-                    CardUsed(selectedCard);
+                    EventCardUsed(selectedCard);
                 };
 
                 _gameInstance.InterceptorService.RunInterceptor(InterceptorEvents.CardUse, cardUseAction, parameters);

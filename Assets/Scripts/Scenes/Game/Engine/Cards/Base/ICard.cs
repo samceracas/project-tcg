@@ -17,8 +17,16 @@ namespace CardGame.Cards.Base
         string ID { get; }
         string Name { get; }
         string Description { get; }
-        int Cost { get; }
+        int Cost { get; set; }
+        int DefaultCost { get; }
         CardType Type { get; }
+        UnitRace Race { get; }
+        
+        bool IsUnitCard { get; }
+        bool IsSpellCard { get; }
+        bool IsUsable { get; }
+
+        int CostModifiedState { get; }
 
         int Attack { get; set; }
         int Health { get; set; }
@@ -28,6 +36,6 @@ namespace CardGame.Cards.Base
         Effector Effector { get; }
 
         void Apply();
-        bool IsUsable();
+        void ClearEvents();
     }
 }

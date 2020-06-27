@@ -2,14 +2,17 @@
 using CardGame.Effectors.Base;
 using CardGame.Players;
 using CardGame.Units.Base;
+using System;
 using System.Linq;
+using UnityEngine;
 
 namespace CardGame.Cards.Base
 {
     public class Card : ICard
     {
         protected string _id, _name, _description;
-        protected int _cost, _targets;
+        protected int _cost, _defaultCost, _targets;
+        protected int _costModifiedState;
         protected Player _player;
         protected Effector _effector;
         protected CardType _cardType;
@@ -17,6 +20,9 @@ namespace CardGame.Cards.Base
         protected int _health;
         protected string _instanceID;
         protected Unit _unit;
+        protected UnitRace _race;
+
+        public Action EventCardCostUpdated;
 
         public Card(Player player, string instanceID = null)
         {
@@ -25,6 +31,9 @@ namespace CardGame.Cards.Base
             _player = player;
             _instanceID = instanceID == null ? Utils.Random.RandomString(15) : instanceID;
             _health = -1;
+            _race = UnitRace.None;
+            _costModifiedState = 0;
+            ClearEvents();
         }
 
         public string ID => _id;
@@ -34,14 +43,40 @@ namespace CardGame.Cards.Base
 
         public string Description => _description;
 
-        public int Cost => _cost;
+        public int Cost {
+            get {
+                return _cost;
+            }
+            set {
+                _cost = value;
+                _cost = Mathf.Clamp(_cost, 0, int.MaxValue);
+                _costModifiedState = _cost - _defaultCost;
+
+                if (_costModifiedState != 0)
+                {
+                    //-1 means that the new cost is less than the default cost
+                    //1 means that the new cost is greater than the default cost
+                    _costModifiedState = Math.Abs(_costModifiedState) / _costModifiedState;
+                }
+
+                EventCardCostUpdated();
+            }
+        }
+
+        public int DefaultCost => _defaultCost;
+
+        public int CostModifiedState => _costModifiedState;
 
         public Player Player { get => _player; set => _player = value; }
 
         public Effector Effector => _effector;
 
+        public bool IsUnitCard { get => _cardType == CardType.Unit; }
+        public bool IsSpellCard { get => _cardType == CardType.Spell; }
+        public virtual bool IsUsable { get => _player.Charges >= _cost && _player.IsMyTurn && _player.Game.GameState == GameState.InProgress; }
 
         public CardType Type => _cardType;
+        public UnitRace Race => _race;
 
         public int Attack { get => _attack; set => _attack = value; }
         public int Health { get => _attack; set => _attack = value; }
@@ -54,25 +89,25 @@ namespace CardGame.Cards.Base
             SpawnUnit();
         }
 
+        public virtual void ClearEvents()
+        {
+            EventCardCostUpdated = () => { };
+        }
+
         protected virtual bool CanSpawnUnit()
         {
-            return _player.UnitsOnField.Count < 7;
+            return _player.UnitsOnField.Count < 7 && _player.Game.GameState == GameState.InProgress;
         }
 
         protected virtual void SpawnUnit()
         {
-            if (_cardType == CardType.Unit && CanSpawnUnit() && _unit != null)
+            if (_unit != null && _cardType == CardType.Unit && CanSpawnUnit())
             {
                 SpawnEffector spawnEffector = new SpawnEffector(_unit);
                 spawnEffector.Card = this;
                 spawnEffector.Player = _player;
                 _player.EffectorStack.ApplyEffector(spawnEffector);
             }
-        }
-
-        public virtual bool IsUsable()
-        {
-            return _player.Charges >= _cost && _player.IsMyTurn && _player.Game.GameState == GameState.InProgress;
         }
     }
 }

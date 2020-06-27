@@ -23,6 +23,9 @@ namespace CardGame.Units.Base
         protected Card _card;
         protected string _unitName;
 
+        public Action EventUnitReadyStateChanged;
+        public Action<int, EffectType> EventUnitDamaged;
+
         public Unit(string instanceID = null)
         {
             _id = GetType().Name;
@@ -30,6 +33,7 @@ namespace CardGame.Units.Base
             _instanceID = instanceID == null ? Utils.Random.RandomString(15) : instanceID;
             _unitState = UnitState.GettingReady;
             _race = UnitRace.Human;
+            ClearEvents();
         }
 
         public string ID => _id;
@@ -43,14 +47,14 @@ namespace CardGame.Units.Base
         public UnitRace Race => _race;
         public Card Card { get => _card; set => _card = value; }
 
-        public void ReceiveDamage(Unit dealer, int damage, EffectType damageSource)
+        public void ReceiveDamage(Unit dealer, int damage, EffectType effectType)
         {
 
             _health -= damage;
 
             if (!_owner.IsSimulated)
             {
-                _owner.UnitDamaged(this, damage, damageSource);
+                EventUnitDamaged(damage, effectType);
             }
 
             if (_health <= 0)
@@ -178,13 +182,19 @@ namespace CardGame.Units.Base
         public void SetReady()
         {
             _unitState = UnitState.Ready;
-            _owner.UnitReadyStateChanged(this);
+            EventUnitReadyStateChanged();
         }
 
         public void SetGettingReady()
         {
             _unitState = UnitState.GettingReady;
-            _owner.UnitReadyStateChanged(this);
+            EventUnitReadyStateChanged();
+        }
+
+        public void ClearEvents()
+        {
+            EventUnitDamaged = (a, b) => { };
+            EventUnitReadyStateChanged = () => { };
         }
     }
 }

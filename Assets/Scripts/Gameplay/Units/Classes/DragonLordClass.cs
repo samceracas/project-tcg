@@ -1,5 +1,7 @@
 ﻿using CardGame;
+using CardGame.Cards.Base;
 using CardGame.Players;
+using CardGame.Units.Base;
 using Gameplay.Cards;
 
 namespace Gameplay.Units.Classes
@@ -9,7 +11,7 @@ namespace Gameplay.Units.Classes
         public DragonLordClass(string name, Game game) : base(name, game)
         {
             _health = _maxHealth = 30;
-            _damage = 999;
+            _damage = 1;
             //a class which specializes in summoning dragons
             //buffs spawned dragons
 
@@ -64,6 +66,15 @@ namespace Gameplay.Units.Classes
 
 
             this.AddCardOnDeck(new ImperialDragonSovereignCard(this));
+        }
+
+        public override void AddCardOnDeck(Card card)
+        {
+            if (card.Race == UnitRace.Dragon)
+            {
+                card.Cost -= 1;
+            }
+            base.AddCardOnDeck(card);
         }
 
         public string ClassName => "Dragon Lord";
