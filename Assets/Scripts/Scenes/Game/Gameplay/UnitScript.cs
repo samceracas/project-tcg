@@ -1,17 +1,9 @@
-﻿using CardGame;
-using CardGame.Constants;
-using CardGame.Effectors;
-using CardGame.Events;
-using CardGame.Players;
+﻿using CardGame.Effectors;
+using CardGame.Units.Abilities;
 using CardGame.Units.Base;
 using EZCameraShake;
-using Force.DeepCloner;
-using Library.Utils.Unity;
 using NaughtyAttributes;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -72,6 +64,12 @@ public class UnitScript : MonoBehaviour
     [SerializeField]
     private GameObject _selectorArrow;
 
+    [SerializeField]
+    private PrefabMap _unitAbilitiesMap;
+
+    [SerializeField]
+    private GameObject _abilitiesContainer;
+
 
     [Header("Effect References")]
 
@@ -102,13 +100,6 @@ public class UnitScript : MonoBehaviour
 
     private UnitTarget _targetingData;
 
-
-    private void Start()
-    {
-        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
-    }
-
-
     public SpriteRenderer Sprite => _unitSprite;
     public Unit Unit => _unit;
 
@@ -127,6 +118,14 @@ public class UnitScript : MonoBehaviour
 
         _selectorArrows = new GameObject[_arrowInstanceCount];
 
+        if (!_playerScript.IsMe)
+        {
+            RectTransform abilityListRectTransform = _abilitiesContainer.GetComponent<RectTransform>();
+            abilityListRectTransform.anchorMin = new Vector2(1, 0);
+            abilityListRectTransform.anchorMax = new Vector2(1, 1);
+            abilityListRectTransform.pivot = new Vector2(0.5f, 0.5f);
+        }
+
         for (int i = 0; i < _arrowInstanceCount; i++)
         {
             _selectorArrows[i] = Instantiate(_selectorArrow, transform);
@@ -140,7 +139,7 @@ public class UnitScript : MonoBehaviour
         _sleepEffect.SetActive(true);
         UpdateTexts();
         ReadyEvents();
-
+        UpdateAbilityIcons();
     }
 
 
@@ -165,7 +164,7 @@ public class UnitScript : MonoBehaviour
 
         unitTarget.validator = (unit) =>
         {
-            return unit.Owner != _playerScript.Player && unit.State != UnitState.Dead;
+            return unit.Owner != _playerScript.Player && unit.State != UnitState.Dead && _unit.CanAttackUnit(unit);
         };
 
         unitTarget.onValidTargetMouseEnter = (unit) =>
@@ -311,9 +310,9 @@ public class UnitScript : MonoBehaviour
         seq.append(LeanTween.moveLocal(gameObject, Vector3.zero, 0.5f));
         seq.append(() =>
         {
+            //check death
             _currentTarget.Unit.CheckDeath(_unit);
             _unit.CheckDeath(_currentTarget.Unit);
-            //check death
         });
         seq.append(() => _unitSprite.flipX = !_unitSprite.flipX);
         seq.append(() => _unit.SetGettingReady());
@@ -422,44 +421,6 @@ public class UnitScript : MonoBehaviour
         });
     }
 
-    private void ReadyEvents()
-    {
-        _unit.ReadyEvents();
-
-        _playerScript.Player.RequestCommandAttack += OnRequestCommandAttack;
-        _playerScript.Player.EventUnitKill += OnUnitKill;
-        _playerScript.Player.EventEndPlayerTurn += OnPlayerEndTurn;
-        _unit.EventUnitReadyStateChanged += OnUnitReadyStateChanged;
-        _unit.EventUnitDamaged += OnUnitDamaged;
-        _unit.EventUnitHealed += OnUnitHealed;
-
-        EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
-
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerEnter;
-        entry.callback.AddListener((eventData) => { ShowTargetIndicator(); });
-
-        eventTrigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerExit;
-        entry.callback.AddListener((eventData) => { HideTargetIndicator(); });
-
-        eventTrigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.BeginDrag;
-        entry.callback.AddListener((eventData) => { StartAttackTargetSelect(); });
-
-        eventTrigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.EndDrag;
-        entry.callback.AddListener((eventData) => { EndAttackTargetSelect(); });
-
-        eventTrigger.triggers.Add(entry);
-    }
-
     private void UpdateTargeter()
     {
         if (_unitAction != UnitAction.Targeting) return;
@@ -532,14 +493,64 @@ public class UnitScript : MonoBehaviour
         }
     }
 
-    private void Kill()
+
+
+    private void ReadyEvents()
+    {
+        _playerScript.Player.RequestCommandAttack += OnRequestCommandAttack;
+        _playerScript.Player.EventUnitKill += OnUnitKill;
+        _playerScript.Player.EventEndPlayerTurn += OnPlayerEndTurn;
+        _unit.EventUnitReadyStateChanged += OnUnitReadyStateChanged;
+        _unit.EventUnitDamaged += OnUnitDamaged;
+        _unit.EventUnitHealed += OnUnitHealed;
+        _unit.EventAbilitiesUpdated += UpdateAbilityIcons;
+
+        EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
+
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((eventData) => { ShowTargetIndicator(); });
+
+        eventTrigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerExit;
+        entry.callback.AddListener((eventData) => { HideTargetIndicator(); });
+
+        eventTrigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.BeginDrag;
+        entry.callback.AddListener((eventData) => { StartAttackTargetSelect(); });
+
+        eventTrigger.triggers.Add(entry);
+
+        entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.EndDrag;
+        entry.callback.AddListener((eventData) => { EndAttackTargetSelect(); });
+
+        eventTrigger.triggers.Add(entry);
+    }
+
+    private void ClearEvents()
     {
         _playerScript.Player.RequestCommandAttack -= OnRequestCommandAttack;
         _playerScript.Player.EventUnitKill -= OnUnitKill;
         _playerScript.Player.EventEndPlayerTurn -= OnPlayerEndTurn;
+        _unit.EventUnitReadyStateChanged -= OnUnitReadyStateChanged;
+        _unit.EventUnitDamaged -= OnUnitDamaged;
+        _unit.EventUnitHealed -= OnUnitHealed;
+        _unit.EventAbilitiesUpdated -= UpdateAbilityIcons;
 
         _unit.ClearEvents();
 
+        EventTrigger eventTrigger = GetComponentInChildren<EventTrigger>();
+        eventTrigger.triggers.Clear();
+    }
+
+    private void Kill()
+    {
+        ClearEvents();
         _spawnPointScript.SetUnOccupied();
         Destroy(gameObject);
     }
@@ -548,6 +559,25 @@ public class UnitScript : MonoBehaviour
     {
         _damageText.text = _unit.Damage.ToString();
         _healthText.text = _unit.Health + "/" + _unit.MaxHealth;
+    }
+
+    private void UpdateAbilityIcons()
+    {
+        foreach (Transform child in _abilitiesContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        //add icons
+        foreach (UnitAbility ability in _unit.Abilities)
+        {
+            Instantiate(_unitAbilitiesMap.GetEntry(ability.ID).prefab, _abilitiesContainer.transform);
+        }
+    }
+
+    private void Start()
+    {
+        GameScript.AnimationState = GameScript.GameAnimationState.Idle;
     }
 
     private void Update()

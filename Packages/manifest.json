@@ -2,6 +2,7 @@
   "dependencies": {
     "com.azixmcaze.unityserializabledictionary": "1.2.0",
     "com.coffee.softmask-for-ugui": "https://github.com/mob-sakai/SoftMaskForUGUI.git",
+    "com.coffee.ui-particle": "https://github.com/mob-sakai/ParticleEffectForUGUI.git",
     "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm",
     "com.unity.2d.animation": "3.2.2",
     "com.unity.2d.psdimporter": "2.1.4",
@@ -60,6 +61,10 @@
     "com.dbrizov.naughtyattributes": {
       "revision": "upm",
       "hash": "8361c4c50a4f375cfac3cdb67ebd3babf15c42d8"
+    },
+    "com.coffee.ui-particle": {
+      "revision": "HEAD",
+      "hash": "901e7f16478a3baa451e8de79a4a61d3879d521d"
     }
   },
   "scopedRegistries": [

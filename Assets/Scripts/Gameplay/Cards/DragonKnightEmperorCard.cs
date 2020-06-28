@@ -9,8 +9,8 @@ namespace Gameplay.Cards
     {
         public DragonKnightEmperorCard(Player player, string instanceID = null) : base(player, instanceID)
         {
-            _cost = _defaultCost = 3;
-            _name = "Draconian Knight";
+            _cost = _defaultCost = 0;
+            _name = "Dragon Knight Emperor Card";
             _description = "";
             _cardType = CardType.Unit;
             _unit = new DragonKnightEmperor(this, player, instanceID);

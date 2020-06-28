@@ -46,10 +46,10 @@ namespace Gameplay.Units.Classes
             //}
 
             ////add cards to deck
-            //for (int k = 0; k < 4; k++)
-            //{
-            //    this.AddCardOnDeck(new DragonKnightEmperorCard(this));
-            //}
+            for (int k = 0; k < 4; k++)
+            {
+                this.AddCardOnDeck(new DragonKnightEmperorCard(this));
+            }
 
             ////add cards to deck
             //for (int k = 0; k < 4; k++)

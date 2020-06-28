@@ -94,6 +94,7 @@ namespace CardGame.Players
             if (_unitsOnField.Count > 0)
             {
                 List<string> unitAttackOrder = GetUnitAttackOrder(randomizer);
+                Dictionary<string, Unit> tauntUnits = Opponent.GetUnitsWithAbility("taunt");
                 List<string> targets = GetPotentialTargets();
 
                 Player opponent = _gameInstance.GetOpponent(this);
@@ -125,7 +126,10 @@ namespace CardGame.Players
                         attackPlayerScore += (1f - (unitDamage / 60f)) * 50f;
                     }
 
+
                     if (opponent.UnitsOnField.Count <= 1) attackPlayerScore = 100f;
+
+                    attackPlayerScore -= tauntUnits.Count * 100f;
 
                     int roll = randomizer.RandomInt(0, 100);
 
@@ -171,10 +175,11 @@ namespace CardGame.Players
 
         protected virtual List<string> GetPotentialTargets()
         {
-            Player opponentPlayer = _gameInstance.GetOpponent(this);
             List<string> targets = new List<string>();
-            Dictionary<string, Unit> units = new Dictionary<string, Unit>(opponentPlayer.UnitsOnField);
-            var unitList = units.ToList();
+            Dictionary<string, Unit> tauntUnits = Opponent.GetUnitsWithAbility("taunt");
+            Debug.Log(tauntUnits.Count + " taunt units");
+            Dictionary<string, Unit> opponentUnits = tauntUnits.Count > 0 ? tauntUnits : Opponent.UnitsOnField;
+            var unitList = opponentUnits.ToList();
 
             //sort units by health
             unitList.Sort((a, b) => a.Value.Health.CompareTo(b.Value.Health));

@@ -1,9 +1,10 @@
 ﻿using CardGame.Cards.Base;
 using CardGame.Constants;
 using CardGame.Effectors;
-using CardGame.Events;
 using CardGame.Players;
+using CardGame.Units.Abilities;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using UnityEngine;
@@ -23,10 +24,12 @@ namespace CardGame.Units.Base
         protected UnitRace _race;
         protected Card _card;
         protected string _unitName;
-
-        protected Interceptor _deathChecker;
+        protected List<UnitAbility> _abilities;
+        protected List<Unit> _unitWhiteList;
+        protected bool _unitWhiteListActive;
 
         public Action EventUnitReadyStateChanged = () => { };
+        public Action EventAbilitiesUpdated = () => { };
         public Action<int, EffectType> EventUnitDamaged = (a, b) => { };
         public Action<int, EffectType> EventUnitHealed = (a, b) => { };
 
@@ -35,10 +38,15 @@ namespace CardGame.Units.Base
             _id = GetType().Name;
             _id = string.Concat(_id.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
             _instanceID = instanceID == null ? Utils.Random.RandomString(15) : instanceID;
-            _unitState = UnitState.GettingReady;
+            _unitState = UnitState.Idle;
             _race = UnitRace.Human;
             _owner = player;
             _card = card;
+            _abilities = new List<UnitAbility>();
+            _unitWhiteList = new List<Unit>();
+            _unitWhiteListActive = false;
+
+            ReadyEvents();
         }
 
         public string ID => _id;
@@ -51,6 +59,8 @@ namespace CardGame.Units.Base
         public UnitState State => _unitState;
         public UnitRace Race => _race;
         public Card Card { get => _card; set => _card = value; }
+        public UnitAbility[] Abilities { get => _abilities.ToArray(); }
+        public bool AttackWhiteListActive { get => _unitWhiteListActive; set => _unitWhiteListActive = value; }
 
         public void ReceiveDamage(Unit dealer, int damage, EffectType effectType, bool checkDeath = false)
         {
@@ -194,6 +204,8 @@ namespace CardGame.Units.Base
 
         public virtual void ClearEvents()
         {
+            ClearAbilities();
+
             EventUnitHealed = (a, b) => { };
             EventUnitDamaged = (a, b) => { };
             EventUnitReadyStateChanged = () => { };
@@ -213,6 +225,82 @@ namespace CardGame.Units.Base
                 //apply effector
                 _owner.EffectorStack.ApplyEffector(deathEffector);
             }
+        }
+
+        public void AddAbility(UnitAbility ability, bool applyDirectly = false)
+        {
+            if (!HasAbility(ability.ID))
+            {
+                ability.Listen(applyDirectly);
+                _abilities.Add(ability);
+                EventAbilitiesUpdated();
+            }
+        }
+
+        public void RemoveAbility(string id)
+        {
+            if (HasAbility(id))
+            {
+                UnitAbility ability = _abilities.Find((a) => a.ID.Equals(id));
+                RemoveAbility(ability);
+            }
+        }
+
+        public void RemoveAbility(UnitAbility ability)
+        {
+            if (HasAbility(ability))
+            {
+                ability.Revert();
+                _abilities.Remove(ability);
+                EventAbilitiesUpdated();
+            }
+        }
+
+        public bool HasAbility(string id)
+        {
+            UnitAbility ability = _abilities.Find((a) => a.ID.Equals(id));
+            return ability != null;
+        }
+
+        public bool HasAbility(UnitAbility ability)
+        {
+            return _abilities.Contains(ability);
+        }
+
+        public void ClearAbilities()
+        {
+            foreach (UnitAbility ability in _abilities)
+            {
+                ability.Revert();
+            }
+
+            _abilities = new List<UnitAbility>();
+        }
+
+        public bool CanAttackUnit(Unit unit)
+        {
+            return !_unitWhiteListActive || (_unitWhiteList.Contains(unit) && _unitWhiteListActive);
+        }
+
+        public void AddUnitToAttackWhiteList(Unit unit)
+        {
+            if (!_unitWhiteList.Contains(unit))
+            {
+                _unitWhiteList.Add(unit);
+            }
+        }
+
+        public void RemoveUnitFromAttackWhiteList(Unit unit)
+        {
+            if (_unitWhiteList.Contains(unit))
+            {
+                _unitWhiteList.Remove(unit);
+            }
+        }
+
+        public void ClearAttackWhiteList()
+        {
+            _unitWhiteList = new List<Unit>();
         }
     }
 }

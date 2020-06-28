@@ -30,7 +30,7 @@ PrefabInstance:
     - target: {fileID: 3742538175708311020, guid: 52f35ccf6cb559f42b42d500d6e371b0,
         type: 3}
       propertyPath: m_Name
-      value: Unit Prefab Variant
+      value: Imperial Dragon Sovereign
       objectReference: {fileID: 0}
     - target: {fileID: 3742538175708311021, guid: 52f35ccf6cb559f42b42d500d6e371b0,
         type: 3}

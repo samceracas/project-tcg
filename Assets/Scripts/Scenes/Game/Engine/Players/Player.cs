@@ -6,6 +6,7 @@ using CardGame.Units.Base;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -375,9 +376,15 @@ namespace CardGame.Players
 
             _unitSelector.StartSelect(1, wrappedMethod, (unit) =>
             {
-                //todo add status effect check
-                return true;
+                return unitSelected.CanAttackUnit(unit);
             });
+        }
+
+        public Dictionary<string, Unit> GetUnitsWithAbility(string abilityID)
+        {
+            var entries = _unitsOnField.Where(e => e.Value.HasAbility(abilityID))
+                   .ToDictionary(x => x.Key, x => x.Value);
+            return entries;
         }
     }
 }

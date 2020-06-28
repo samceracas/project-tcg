@@ -54,6 +54,7 @@ namespace CardGame
         public Randomizer Randomizer => _randomizer;
         public List<Player> Players => _players;
         public GameSettings Settings => _gameSettings;
+        public bool IsStarted => _gameState == GameState.InProgress;
 
         public void ClearEvents()
         {

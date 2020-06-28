@@ -1,11 +1,14 @@
-﻿using CardGame.Cards.Base;
+﻿using Boo.Lang;
+using CardGame.Cards.Base;
 using CardGame.Effectors;
 using CardGame.Players;
+using CardGame.Units.Abilities;
 
 namespace CardGame.Units.Base
 {
     public enum UnitState
     {
+        Idle,
         GettingReady,
         Ready,
         Attacking,
@@ -31,6 +34,8 @@ namespace CardGame.Units.Base
         string ID { get; }
         string UnitName { get; }
         string InstanceID { get; }
+        UnitAbility[] Abilities { get; }
+        bool AttackWhiteListActive { get; }
         void ReceiveDamage(Unit dealer, int damage, EffectType damageSource, bool checkDeath);
         void Attack(Unit target, bool checkDeath, bool retaliate);
         void Heal(Unit dealer, int amount);
@@ -42,6 +47,16 @@ namespace CardGame.Units.Base
         void ReadyEvents();
         void ClearEvents();
         void CheckDeath(Unit unit);
+        void AddAbility(UnitAbility ability, bool applyDirectly = false);
+        void RemoveAbility(string instanceID);
+        void RemoveAbility(UnitAbility ability);
+        bool HasAbility(string id);
+        bool HasAbility(UnitAbility ability);
+        void ClearAbilities();
+        bool CanAttackUnit(Unit unit);
+        void AddUnitToAttackWhiteList(Unit unit);
+        void RemoveUnitFromAttackWhiteList(Unit unit);
+        void ClearAttackWhiteList();
         int Health { get; set; }
         int MaxHealth { get; set; }
         int Damage { get; set; }

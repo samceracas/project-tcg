@@ -32,5 +32,6 @@ namespace CardGame.Players
         void UseCard(int cardIndex);
         void CommandAttack(string instanceID);
         void ResetTurn();
+        Dictionary<string, Unit> GetUnitsWithAbility(string abilityID);
     }
 }
