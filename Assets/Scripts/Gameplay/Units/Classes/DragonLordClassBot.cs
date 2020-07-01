@@ -28,44 +28,45 @@ namespace Gameplay.Units.Classes
             //  Dragonic spells cost 1 less, Dragons cost 2 less
             //
             //add cards to deck
-            for (int k = 0; k < 1; k++)
+            ////add cards to deck
+            for (int k = 0; k < 4; k++)
             {
                 this.AddCardOnDeck(new HarmlessDragonEggCard(this));
             }
 
             //add cards to deck
-            for (int k = 0; k < 1; k++)
+            for (int k = 0; k < 2; k++)
             {
                 this.AddCardOnDeck(new DragonLampreyCard(this));
             }
 
-            //add cards to deck
-            for (int k = 0; k < 1; k++)
+            ////add cards to deck
+            for (int k = 0; k < 4; k++)
             {
                 this.AddCardOnDeck(new KoboldSpellCasterCard(this));
             }
 
-            //add cards to deck
-            for (int k = 0; k < 1; k++)
+            ////add cards to deck
+            for (int k = 0; k < 5; k++)
             {
                 this.AddCardOnDeck(new KoboldArcherCard(this));
             }
 
-            //add cards to deck
-            for (int k = 0; k < 10; k++)
+            ////add cards to deck
+            for (int k = 0; k < 3; k++)
             {
                 this.AddCardOnDeck(new DragonKnightEmperorCard(this));
             }
 
-            //add cards to deck
-            for (int k = 0; k < 1; k++)
+            ////add cards to deck
+            for (int k = 0; k < 2; k++)
             {
                 this.AddCardOnDeck(new FallenDragonKnightCard(this));
             }
 
 
-            //add cards to deck
-            for (int k = 0; k < 1; k++)
+            ////add cards to deck
+            for (int k = 0; k < 3; k++)
             {
                 this.AddCardOnDeck(new KoboldSpearmanCard(this));
             }

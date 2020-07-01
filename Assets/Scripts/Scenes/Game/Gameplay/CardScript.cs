@@ -1,5 +1,4 @@
-﻿using Boo.Lang;
-using CardGame;
+﻿using CardGame;
 using CardGame.Cards.Base;
 using Coffee.UIExtensions;
 using Library.Extensions.Unity;

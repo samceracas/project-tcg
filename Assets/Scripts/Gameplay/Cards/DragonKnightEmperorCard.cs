@@ -11,7 +11,7 @@ namespace Gameplay.Cards
         {
             _cost = _defaultCost = 0;
             _name = "Dragon Knight Emperor Card";
-            _description = "";
+            _description = "<b>Taunt</b>";
             _cardType = CardType.Unit;
             _unit = new DragonKnightEmperor(this, player, instanceID);
             _health = _unit.Health;

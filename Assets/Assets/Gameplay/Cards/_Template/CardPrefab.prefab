@@ -256,10 +256,9 @@ MonoBehaviour:
   m_text: 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a77a7f736be458240a50319057d93a8e, type: 2}
-  m_sharedMaterial: {fileID: 21832753886299502, guid: a77a7f736be458240a50319057d93a8e,
-    type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 0873858c2a104af42a967dc93e949898, type: 2}
   m_fontSharedMaterials:
-  - {fileID: 21832753886299502, guid: a77a7f736be458240a50319057d93a8e, type: 2}
+  - {fileID: 2100000, guid: 0873858c2a104af42a967dc93e949898, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -553,10 +552,9 @@ MonoBehaviour:
   m_text: 999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a77a7f736be458240a50319057d93a8e, type: 2}
-  m_sharedMaterial: {fileID: 21832753886299502, guid: a77a7f736be458240a50319057d93a8e,
-    type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 0873858c2a104af42a967dc93e949898, type: 2}
   m_fontSharedMaterials:
-  - {fileID: 21832753886299502, guid: a77a7f736be458240a50319057d93a8e, type: 2}
+  - {fileID: 2100000, guid: 0873858c2a104af42a967dc93e949898, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1084,13 +1082,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Version: 300
-  m_EffectMaterial: {fileID: 21939717441729078, guid: 17b17d6effbe14075a3bbdf1fda1f6e1,
+  m_EffectMaterial: {fileID: 21162286589123374, guid: 17b17d6effbe14075a3bbdf1fda1f6e1,
     type: 2}
   m_EffectFactor: 0
   m_Width: 0.263
   m_Softness: 0.57
   m_Color: {r: 3.278432, g: 0.41194957, b: 0, a: 1}
-  m_ColorMode: 2
+  m_ColorMode: 1
   m_NoiseTexture: {fileID: 0}
   m_EffectArea: 0
   m_KeepAspectRatio: 1
@@ -7679,6 +7677,9 @@ MonoBehaviour:
   - {fileID: 8015410485071324256}
   - {fileID: 8395119968826290672}
   - {fileID: 5918156606741655791}
+  - {fileID: 51505079}
+  - {fileID: 906164888}
+  - {fileID: 446178667}
 --- !u!222 &675397797358844985
 CanvasRenderer:
   m_ObjectHideFlags: 0

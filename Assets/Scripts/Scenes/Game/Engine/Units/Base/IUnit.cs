@@ -1,5 +1,4 @@
-﻿using Boo.Lang;
-using CardGame.Cards.Base;
+﻿using CardGame.Cards.Base;
 using CardGame.Effectors;
 using CardGame.Players;
 using CardGame.Units.Abilities;
