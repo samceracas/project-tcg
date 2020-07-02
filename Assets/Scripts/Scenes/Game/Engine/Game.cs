@@ -15,11 +15,13 @@ namespace CardGame
         Ended
     }
 
+    [Serializable]
     public class GameSettings
     {
         public int MaxTimePerRound = 35;
         public int InitialCardCount = 3;
         public int CardIncrementsPerTurn = 1;
+        public int MaxUnitsOnField = 4; 
     }
 
     public class Game : IDisposable

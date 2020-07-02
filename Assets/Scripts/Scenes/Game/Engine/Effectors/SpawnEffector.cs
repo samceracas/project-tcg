@@ -16,7 +16,7 @@ namespace CardGame.Effectors
 
         public override void Apply()
         {
-            if (_player.UnitsOnField.Count >= 7)
+            if (_player.UnitsOnField.Count >= _player.Game.Settings.MaxUnitsOnField)
             {
                 _player.EventMoveError($"Cannot spawn {_target.UnitName}, battlefield is full.");
                 return;
