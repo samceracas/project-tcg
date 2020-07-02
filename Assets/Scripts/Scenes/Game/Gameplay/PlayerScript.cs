@@ -51,6 +51,7 @@ public class PlayerScript : MonoBehaviour
     private Game _game;
     private Player _player;
     private GameObject _cardContainer, _deckObject, _gameCanvas;
+    private GameObject _deckCenter;
     private PlayerFrame _playerFrame;
 
     private float _addToHandDelay = 0f;
@@ -142,19 +143,22 @@ public class PlayerScript : MonoBehaviour
         UnitScript unitScript = obj.GetComponent<UnitScript>();
 
         _unitsOnField.Add(unitScript);
-        _playerFrame.AddUnitFrame(_game, unit, entry.UnitFrame);
+        if (entry.IsClass)
+        {
+            _playerFrame.AddUnitFrame(_game, unit, entry.UnitFrame);
+        }
 
         unitScript.Ready(spawn, this, unit);
     }
 
 
-    public void ReArrangeCardsOnHand(float speed, bool setIdleOnComplete = true)
+    public void ReArrangeCardsOnHand(float speed)
     {
         if (_cardsOnHand.Count <= 0) return;
         float totalCardCount = _cardsOnHand.Count;
-        float maxCardCount = 10f;
-        float cardWidth = _cardsOnHand[0].GetComponent<CardScript>().CardDimensions.x * 0.65f;
-        float startX = (_gameCanvas.transform.position.x) - ((totalCardCount * (cardWidth / 2)) / 2);
+        float maxCardCount = _player.Game.Settings.MaxCardsOnDeck;
+        float cardWidth = _cardsOnHand[0].GetComponent<CardScript>().CardDimensions.x;
+        float startX = (_cardContainer.transform.position.x) - ((totalCardCount * (cardWidth / 2)) / 2);
         float quarterWidth = (cardWidth / 4f);
         float cardsCountPercent = (totalCardCount) / maxCardCount;
         float totalTwist = 30f;
@@ -226,7 +230,7 @@ public class PlayerScript : MonoBehaviour
             _cardsOnHand.Remove(toRemove);
         }
 
-        ReArrangeCardsOnHand(0.5f, false);
+        ReArrangeCardsOnHand(0.5f);
     }
 
     private void ReadySpawnPoints()
@@ -280,15 +284,6 @@ public class PlayerScript : MonoBehaviour
         });
     }
 
-    private Card InstantiateCardClass(string className)
-    {
-        return (Card)Activator.CreateInstance(
-            Type.GetType("Gameplay.Cards." + className), new object[] {
-                _player
-            });
-    }
-
-
     private void OnRequestUseCard(Card drawnCard)
     {
 
@@ -308,7 +303,6 @@ public class PlayerScript : MonoBehaviour
                     GameObject cardInstance = Instantiate(cardEntry.data.prefab, _gameCanvas.transform);
                     CardScript cardScript = cardInstance.GetComponent<CardScript>();
                     //@todo add config for default card scale
-                    cardScript.DefaultScale = new Vector3(0.45f, 0.45f, 0.45f);
                     cardScript.Ready(this, drawnCard);
                     cardScript.ShowStats();
                     cardScript.ClearEvents();
@@ -332,12 +326,11 @@ public class PlayerScript : MonoBehaviour
         {
             GameObject cardInstance = Instantiate(cardEntry.data.prefab, _gameCanvas.transform);
             CardScript cardScript = cardInstance.GetComponent<CardScript>();
-            cardScript.DefaultScale = new Vector3(0.45f, 0.45f, 0.45f);
             cardScript.Ready(this, card);
 
             cardInstance.transform.position = _deckObject.transform.position;
-
             cardInstance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+
             float delay = 0.5f;
 
             GameScript.AnimationState = GameScript.GameAnimationState.Animating;
@@ -367,6 +360,7 @@ public class PlayerScript : MonoBehaviour
             LTSeq sequence = LeanTween.sequence();
             while (commands.Any() && _player.Game.GameState == GameState.InProgress && _player.IsMyTurn)
             {
+                sequence.append(3f);
                 string unparsedCommand = commands.Dequeue();
                 string[] tokens = unparsedCommand.Split(':');
                 switch (tokens[0])
@@ -387,7 +381,6 @@ public class PlayerScript : MonoBehaviour
                         sequence.append(3f);
                         break;
                 }
-                sequence.append(1f);
             }
 
             if (_player.Game.GameState == GameState.InProgress)

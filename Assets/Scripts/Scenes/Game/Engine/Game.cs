@@ -21,7 +21,8 @@ namespace CardGame
         public int MaxTimePerRound = 35;
         public int InitialCardCount = 3;
         public int CardIncrementsPerTurn = 1;
-        public int MaxUnitsOnField = 4; 
+        public int MaxUnitsOnField = 4;
+        public int MaxCardsOnDeck = 10;
     }
 
     public class Game : IDisposable

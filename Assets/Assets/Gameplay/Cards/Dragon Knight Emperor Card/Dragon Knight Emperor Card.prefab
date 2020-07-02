@@ -613,7 +613,7 @@ PrefabInstance:
     - target: {fileID: 7487430269438181199, guid: b0112a28c2f2c3345870454d21e529e3,
         type: 3}
       propertyPath: m_Name
-      value: CardPrefab Variant
+      value: Dragon Knight Emperor Card
       objectReference: {fileID: 0}
     - target: {fileID: 7838777330863031017, guid: b0112a28c2f2c3345870454d21e529e3,
         type: 3}
@@ -635,6 +635,21 @@ PrefabInstance:
       propertyPath: _toDissolve.Array.data[19]
       value: 
       objectReference: {fileID: 4880367293679702495}
+    - target: {fileID: 7838777330863031017, guid: b0112a28c2f2c3345870454d21e529e3,
+        type: 3}
+      propertyPath: _defaultScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838777330863031017, guid: b0112a28c2f2c3345870454d21e529e3,
+        type: 3}
+      propertyPath: _defaultScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838777330863031017, guid: b0112a28c2f2c3345870454d21e529e3,
+        type: 3}
+      propertyPath: _defaultScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9087298381699987610, guid: b0112a28c2f2c3345870454d21e529e3,
         type: 3}
       propertyPath: m_Material

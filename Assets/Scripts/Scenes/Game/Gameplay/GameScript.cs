@@ -29,6 +29,9 @@ public class GameScript : MonoBehaviour
     [SerializeField]
     private GameState _state = GameState.Waiting;
 
+    [SerializeField]
+    private GameSettings _gameSettings;
+
     [Header("Events")]
     public UnityEvent EventGameWaiting;
     public UnityEvent EventGameInProgress;
@@ -54,7 +57,7 @@ public class GameScript : MonoBehaviour
     {
         LeanTween.init(1000, 1000);
         _gameAnimationState = GameAnimationState.Idle;
-        _game = new Game(DateTime.Now.ToString());
+        _game = new Game(DateTime.Now.ToString(), _gameSettings);
         SetState(GameState.Waiting);
 
         _roundTimer = new CountdownTimer.Entry();

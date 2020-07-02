@@ -71,6 +71,7 @@ public class CardScript : MonoBehaviour
     [SerializeField]
     private GameObject[] _toDisableBeforeDissolve;
 
+
     private PlayerScript _playerScript;
     private Card _card;
     private int _flipCount;
@@ -92,9 +93,10 @@ public class CardScript : MonoBehaviour
     private float _screenHeightRatio = -1f;
     private RectTransform _cardRectTransform;
 
+    private Vector3 _defaultScale = new Vector3(0.85f, 0.85f, 0.85f);
 
     public Card Card => _card;
-    public Vector3 DefaultScale { get; set; }
+    public Vector3 DefaultScale { get => _defaultScale; }
     public Vector2 CardDimensions {
         get {
             if (_screenWidthRatio == -1f)
@@ -112,13 +114,6 @@ public class CardScript : MonoBehaviour
     private void Update()
     {
         _cardHoverCountdown -= Time.deltaTime;
-        if (Input.GetAxis("Mouse X") != 0f || Input.GetAxis("Mouse Y") != 0f)
-        {
-            if (RectTransformUtility.RectangleContainsScreenPoint(_cardRectTransform, Input.mousePosition) && _isHovered)
-            {
-                ShowCardDetails();
-            }
-        }
     }
 
     private void ListenEvents()
@@ -142,19 +137,16 @@ public class CardScript : MonoBehaviour
         trigger.triggers.Add(entry);
 
         entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerEnter;
+        entry.eventID = EventTriggerType.PointerClick;
         entry.callback.AddListener((data) =>
         {
-            _isHovered = true;
-        });
-        trigger.triggers.Add(entry);
-
-        entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerExit;
-        entry.callback.AddListener((data) =>
-        {
-            _isHovered = false;
-            HideCardDetails();
+            if (_cardDetailsState == CardDetailsState.Hidden)
+            {
+                ShowCardDetails();
+            } else
+            {
+                HideCardDetails();
+            }
         });
         trigger.triggers.Add(entry);
 
@@ -355,6 +347,7 @@ public class CardScript : MonoBehaviour
             return;
         }
 
+        LeanTween.cancel(gameObject);
         GameScript.AnimationState = GameScript.GameAnimationState.Animating;
         Dissolve(() =>
         {
